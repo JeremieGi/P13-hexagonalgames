@@ -3,6 +3,8 @@ plugins {
   alias(libs.plugins.kotlin)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
+  // Add the Google services Gradle plugin
+  id("com.google.gms.google-services")
 }
 
 android {
@@ -71,4 +73,18 @@ dependencies {
   testImplementation(libs.junit)
   androidTestImplementation(libs.ext.junit)
   androidTestImplementation(libs.espresso.core)
+
+
+  // Firebase
+
+  // Import the Firebase BoM
+  implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+
+  // When using the BoM, don't specify versions in Firebase dependencies
+  implementation("com.google.firebase:firebase-analytics")
+
+  // Add the dependencies for any other desired Firebase products
+
+  // Authentification
+  implementation("com.firebaseui:firebase-ui-auth:8.0.2")
 }

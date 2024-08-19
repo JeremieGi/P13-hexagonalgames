@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49276991674",
+    "project_id": "hexagonal-games",
+    "storage_bucket": "hexagonal-games.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49276991674:android:0e2bb77b3861bfd133aa83",
+        "android_client_info": {
+          "package_name": "com.openclassrooms.hexagonal.games"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPXsczlNEGJkR_QVmgIcOA3iiT5WNqgaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

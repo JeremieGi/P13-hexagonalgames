@@ -11,4 +11,11 @@
     android:title="@string/action_settings"
     app:showAsAction="never"
     />
+
+  <item
+      android:id="@+id/action_myaccount"
+      android:orderInCategory="101"
+      android:title="@string/action_myaccount"
+      app:showAsAction="never"
+      />
 </menu>

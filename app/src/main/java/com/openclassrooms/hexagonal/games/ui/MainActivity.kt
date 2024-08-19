@@ -8,6 +8,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
@@ -21,7 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-  
+
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     
@@ -33,8 +38,13 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
+
+
   
 }
+
+
+
 
 @Composable
 fun HexagonalGamesNavHost(navHostController: NavHostController) {
@@ -68,3 +78,5 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     }
   }
 }
+
+

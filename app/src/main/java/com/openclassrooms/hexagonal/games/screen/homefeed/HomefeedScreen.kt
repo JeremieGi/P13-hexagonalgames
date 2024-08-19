@@ -1,5 +1,7 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
+import androidx.activity.ComponentActivity.RESULT_OK
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -42,6 +44,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.util.DebugLogger
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
@@ -57,6 +62,25 @@ fun HomefeedScreen(
   onFABClick: () -> Unit = {},
 ) {
   var showMenu by rememberSaveable { mutableStateOf(false) }
+
+  val signInLauncher = rememberLauncherForActivityResult(
+    contract = FirebaseAuthUIActivityResultContract()
+  ) { result ->
+    // Gérez le résultat ici
+
+    val response = result.idpResponse
+    if (result.resultCode == RESULT_OK) {
+      // Successfully signed in
+      val user = FirebaseAuth.getInstance().currentUser
+      // ...
+    } else {
+      // Sign in failed. If response is null the user canceled the
+      // sign-in flow using the back button. Otherwise check
+      // response.getError().getErrorCode() and handle the error.
+      // ...
+    }
+
+  }
   
   Scaffold(
     modifier = modifier,
@@ -83,6 +107,32 @@ fun HomefeedScreen(
               text = {
                 Text(
                   text = stringResource(id = R.string.action_settings)
+                )
+              }
+            )
+            DropdownMenuItem(
+              onClick = {
+                // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
+                // Choose authentication providers
+                // Ici : Authenfication mail / mot de passe
+                val providers = arrayListOf(
+                  AuthUI.IdpConfig.EmailBuilder().build(),
+                )
+
+                // Create and launch sign-in intent
+                val signInIntent = AuthUI.getInstance()
+                  .createSignInIntentBuilder()
+                  .setAvailableProviders(providers)
+                  .build()
+
+                signInLauncher.launch(signInIntent)
+
+                // Si l’utilisateu est connecté, redirige vers l’écran de gestion du compte
+
+              },
+              text = {
+                Text(
+                  text = stringResource(id = R.string.action_myaccount)
                 )
               }
             )
@@ -113,6 +163,8 @@ fun HomefeedScreen(
     )
   }
 }
+
+
 
 @Composable
 private fun HomefeedList(
