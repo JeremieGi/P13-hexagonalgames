@@ -87,4 +87,7 @@ dependencies {
 
   // Authentification
   implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+
+  // Firestore = base de données NoSQL
+  implementation("com.google.firebase:firebase-firestore")
 }

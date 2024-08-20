@@ -22,4 +22,5 @@ data class User(
    * User's last name.
    */
   val lastname: String
+
 ) : Serializable

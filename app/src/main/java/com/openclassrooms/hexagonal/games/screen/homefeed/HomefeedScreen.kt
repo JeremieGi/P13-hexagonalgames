@@ -82,6 +82,9 @@ fun HomefeedScreen(
         .makeText(context, context.getString(R.string.connexion_ok), Toast.LENGTH_SHORT)
         .show()
 
+      // Insertion de l'utilisateur dans la base de données
+      viewModel.insertCurrentUserInFirestore()
+
       showMenu = false
 
       // ...
@@ -142,7 +145,7 @@ fun HomefeedScreen(
 
                   // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumerattion protection
 
-                  // TODO : Denis : La récupération de mot de passe ne marche pas
+                  // TODO Denis : La récupération de mot de passe ne marche pas avec mes adresses mails Free
 
                   // Ici : Authenfication mail / mot de passe
                   val providers = arrayListOf(
