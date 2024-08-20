@@ -19,4 +19,6 @@
   <string name="error_title">Title not valid</string>
   <string name="deconnexion_ok">Logout OK</string>
   <string name="connexion_ok">Login OK</string>
+  <string name="unknowError">An unknown error occurred.</string>
+  <string name="deleteaccount_ok">Account deleted</string>
 </resources>

@@ -19,4 +19,6 @@
   <string name="error_title">Titre non valide</string>
   <string name="deconnexion_ok">Déconnexion OK</string>
   <string name="connexion_ok">Connexion OK</string>
+  <string name="unknowError">Une erreur inconnue s\'est produite.</string>
+  <string name="deleteaccount_ok">Compte supprimé</string>
 </resources>
