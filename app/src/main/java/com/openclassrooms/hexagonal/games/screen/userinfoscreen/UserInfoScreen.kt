@@ -13,7 +13,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -65,7 +64,8 @@ fun UserInfoScreen(
         UserInfo(
             modifier = Modifier.padding(contentPadding),
             userDisplayNameP = viewModel.user?.displayName,
-            userEmailP = viewModel.user?.email
+            userEmailP = viewModel.user?.email,
+            onBackClick = onBackClick
         )
     }
 }
@@ -75,7 +75,8 @@ fun UserInfoScreen(
 private fun UserInfo(
     modifier: Modifier = Modifier,
     userDisplayNameP : String?,
-    userEmailP : String ?
+    userEmailP : String ?,
+    onBackClick: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -91,11 +92,11 @@ private fun UserInfo(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = "User Info", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
+        //Text(text = "User Info", style = MaterialTheme.typography.headlineMedium)
+        //Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Name: ${userDisplayNameP ?: "N/A"}")
-        Text(text = "Email: ${userEmailP ?: "N/A"}")
+        Text(text = stringResource(R.string.name, userDisplayNameP ?: "N/A"))
+        Text(text = stringResource(R.string.email, userEmailP ?: "N/A"))
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,6 +109,8 @@ private fun UserInfo(
                     Toast
                         .makeText(context, context.getString(R.string.deconnexion_ok), Toast.LENGTH_SHORT)
                         .show()
+
+                    onBackClick()
 
                 }
                 .addOnFailureListener { exception ->
@@ -148,6 +151,8 @@ private fun UserInfo(
                         Toast
                             .makeText(context, context.getString(R.string.deleteaccount_ok), Toast.LENGTH_SHORT)
                             .show()
+
+                        onBackClick()
 
                     }
                     else{
@@ -193,7 +198,8 @@ private fun UserInfoPreview() {
     HexagonalGamesTheme {
         UserInfo(
             userDisplayNameP = "Jérémie",
-            userEmailP = "jeremie.neotic@free.fr"
+            userEmailP = "jeremie.neotic@free.fr",
+            onBackClick = {}
         )
     }
 

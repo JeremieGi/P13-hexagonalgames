@@ -21,4 +21,6 @@
   <string name="connexion_ok">Connexion OK</string>
   <string name="unknowError">Une erreur inconnue s\'est produite.</string>
   <string name="deleteaccount_ok">Compte supprimé</string>
+  <string name="name">Nom : %1$s</string>
+  <string name="email">Email : %1$s</string>
 </resources>

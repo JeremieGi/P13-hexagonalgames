@@ -48,13 +48,10 @@ import coil.util.DebugLogger
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
-import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,10 +88,18 @@ fun HomefeedScreen(
 
       // ...
     } else {
-      // Sign in failed. If response is null the user canceled the
-      // sign-in flow using the back button. Otherwise check
-      // response.getError().getErrorCode() and handle the error.
-      // ...
+
+      response?.error?.errorCode?.let {
+        Toast
+          .makeText(context, it, Toast.LENGTH_SHORT)
+          .show()
+      }
+      ?: run {
+        // Si errorCode est null, afficher un message d'erreur générique
+        Toast.makeText(context, context.getString(R.string.unknowError), Toast.LENGTH_SHORT).show()
+      }
+
+
     }
 
   }
@@ -138,7 +143,7 @@ fun HomefeedScreen(
 
                   // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
 
-                  // TODO Denis : Essaie toujours d'ajouter un nouvel utilisateur alors que je voudrais pouvoir me loguer avec un email connu
+                  // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumerattion protection
 
                   // Ici : Authenfication mail / mot de passe
                   val providers = arrayListOf(
@@ -149,6 +154,7 @@ fun HomefeedScreen(
                   val signInIntent = AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
+                    //.setAlwaysShowSignInMethodScreen(true) // Affiche la fenêtre Sign in with ...
                     .build()
 
                   signInLauncher.launch(signInIntent)
@@ -248,7 +254,7 @@ private fun HomefeedCell(
         text = post.title,
         style = MaterialTheme.typography.titleLarge
       )
-      if (post.photoUrl.isNullOrEmpty() == false) {
+      if (!post.photoUrl.isNullOrEmpty()) {
         AsyncImage(
           modifier = Modifier
             .padding(top = 8.dp)
@@ -264,7 +270,7 @@ private fun HomefeedCell(
           contentScale = ContentScale.Crop,
         )
       }
-      if (post.description.isNullOrEmpty() == false) {
+      if (!post.description.isNullOrEmpty()) {
         Text(
           text = post.description,
           style = MaterialTheme.typography.bodyMedium

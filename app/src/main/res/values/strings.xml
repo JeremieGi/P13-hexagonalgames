@@ -21,4 +21,6 @@
   <string name="connexion_ok">Login OK</string>
   <string name="unknowError">An unknown error occurred.</string>
   <string name="deleteaccount_ok">Account deleted</string>
+  <string name="name">Name: %1$s</string>
+  <string name="email">Email: %1$s</string>
 </resources>

@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.screen.ad
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
@@ -77,13 +78,25 @@ class AddViewModel @Inject constructor(private val postRepository: PostRepositor
   /**
    * Attempts to add the current post to the repository after setting the author.
    *
-   * TODO: Implement logic to retrieve the current user.
    */
   fun addPost() {
-    //TODO : retrieve the current user
+
+    // Retrieve the current user
+
+    val userParam : User?
+    val userFirebase = FirebaseAuth.getInstance().currentUser
+
+    userParam = if (userFirebase!=null){
+      User(id=userFirebase.uid, firstname = userFirebase.displayName?:"", lastname = "")
+    }
+    else{
+      null
+    }
+
     postRepository.addPost(
       _post.value.copy(
-        author = User("1", "Gerry", "Ariella")
+        //author = User("1", "Gerry", "Ariella")
+        author = userParam
       )
     )
   }
