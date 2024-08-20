@@ -1,17 +1,27 @@
 package com.openclassrooms.hexagonal.games.screen.userinfoscreen
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.openclassrooms.hexagonal.games.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class UserInfoViewModel : ViewModel() {
-
-    // TODO Denis : ViewModel utile ici ? pour gérer des évolutions ?
-
-    private val _user = FirebaseAuth.getInstance().currentUser
-
-    val user : FirebaseUser?
-        get() = _user
+@HiltViewModel
+class UserInfoViewModel @Inject constructor(
+    private val userRepository : UserRepository
+) : ViewModel() {
 
 
+    /**
+     * Return current user
+     */
+    fun getCurrentUser() : FirebaseUser? {
+        return userRepository.getCurrentUser()
+    }
+
+/*
+    fun isCurrentUserLogged() : Boolean {
+        return userRepository.isCurrentUserLogged()
+    }
+*/
 }

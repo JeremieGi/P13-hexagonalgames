@@ -63,8 +63,8 @@ fun UserInfoScreen(
     ) { contentPadding ->
         UserInfo(
             modifier = Modifier.padding(contentPadding),
-            userDisplayNameP = viewModel.user?.displayName,
-            userEmailP = viewModel.user?.email,
+            userDisplayNameP = viewModel.getCurrentUser()?.displayName,
+            userEmailP = viewModel.getCurrentUser()?.email,
             onBackClick = onBackClick
         )
     }

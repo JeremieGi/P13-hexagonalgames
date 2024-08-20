@@ -2,7 +2,9 @@ package com.openclassrooms.hexagonal.games.screen.homefeed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseUser
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
+import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,10 @@ import javax.inject.Inject
  * allowing UI components to observe and react to changes in the posts data.
  */
 @HiltViewModel
-class HomefeedViewModel @Inject constructor(private val postRepository: PostRepository) :
+class HomefeedViewModel @Inject constructor(
+  private val postRepository: PostRepository,
+  private val userRepository: UserRepository
+) :
   ViewModel() {
   
   private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
@@ -35,6 +40,18 @@ class HomefeedViewModel @Inject constructor(private val postRepository: PostRepo
         _posts.value = it
       }
     }
+  }
+/*
+  /**
+   * Return current user
+   */
+  fun getCurrentUser() : FirebaseUser? {
+    return userRepository.getCurrentUser()
+  }
+*/
+
+  fun isCurrentUserLogged() : Boolean {
+    return userRepository.isCurrentUserLogged()
   }
   
 }

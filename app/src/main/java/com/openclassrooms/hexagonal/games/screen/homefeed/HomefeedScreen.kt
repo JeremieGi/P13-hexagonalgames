@@ -47,8 +47,6 @@ import coil.imageLoader
 import coil.util.DebugLogger
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
@@ -137,9 +135,8 @@ fun HomefeedScreen(
             DropdownMenuItem(
               onClick = {
 
-                val currentUser = Firebase.auth.currentUser
 
-                if (currentUser == null){
+                if (!viewModel.isCurrentUserLogged()){
 
                   // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
 

@@ -2,8 +2,8 @@ package com.openclassrooms.hexagonal.games.screen.ad
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
+import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,10 @@ import javax.inject.Inject
  * It utilizes dependency injection to retrieve a PostRepository instance for interacting with post data.
  */
 @HiltViewModel
-class AddViewModel @Inject constructor(private val postRepository: PostRepository) : ViewModel() {
+class AddViewModel @Inject constructor(
+  private val postRepository: PostRepository,
+  private val userRepository: UserRepository
+) : ViewModel() {
   
   /**
    * Internal mutable state flow representing the current post being edited.
@@ -84,7 +87,7 @@ class AddViewModel @Inject constructor(private val postRepository: PostRepositor
     // Retrieve the current user
 
     val userParam : User?
-    val userFirebase = FirebaseAuth.getInstance().currentUser
+    val userFirebase = userRepository.getCurrentUser()
 
     userParam = if (userFirebase!=null){
       User(id=userFirebase.uid, firstname = userFirebase.displayName?:"", lastname = "")
