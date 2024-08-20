@@ -16,6 +16,7 @@ import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
+import com.openclassrooms.hexagonal.games.screen.userinfoscreen.UserInfoScreen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,7 +41,6 @@ class MainActivity : ComponentActivity() {
   }
 
 
-  
 }
 
 
@@ -62,6 +62,9 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
         },
         onFABClick = {
           navHostController.navigate(Screen.AddPost.route)
+        },
+        onMyAccountClickWithConnectedUser = {
+          navHostController.navigate(Screen.UserInfo.route)
         }
       )
     }
@@ -76,6 +79,12 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
         onBackClick = { navHostController.navigateUp() }
       )
     }
+    composable(route = Screen.UserInfo.route) {
+      UserInfoScreen(
+        onBackClick = { navHostController.navigateUp() }
+      )
+    }
+
   }
 }
 

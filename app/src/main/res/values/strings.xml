@@ -2,6 +2,8 @@
   <string name="app_name">Hexagonal Games</string>
   <string name="action_settings">Settings</string>
   <string name="action_myaccount">My account</string>
+  <string name="SignOut">Sign out</string>
+  <string name="DeleteAccount">Delete account</string>
   <string name="add_fragment_label">Add a post</string>
   <string name="homefeed_fragment_label">Home</string>
   <string name="by">By %1$s %2$s</string>
@@ -15,4 +17,6 @@
   <string name="contentDescription_more">More</string>
   <string name="contentDescription_notification_icon">Icone de notification</string>
   <string name="error_title">Title not valid</string>
+  <string name="deconnexion_ok">Logout OK</string>
+  <string name="connexion_ok">Login OK</string>
 </resources>

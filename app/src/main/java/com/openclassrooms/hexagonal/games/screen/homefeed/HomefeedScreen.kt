@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
+import android.widget.Toast
 import androidx.activity.ComponentActivity.RESULT_OK
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
@@ -46,10 +47,14 @@ import coil.imageLoader
 import coil.util.DebugLogger
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
+import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,18 +65,30 @@ fun HomefeedScreen(
   onPostClick: (Post) -> Unit = {},
   onSettingsClick: () -> Unit = {},
   onFABClick: () -> Unit = {},
+  onMyAccountClickWithConnectedUser : () -> Unit = {}
+
 ) {
+
+  val context = LocalContext.current
+
   var showMenu by rememberSaveable { mutableStateOf(false) }
+
 
   val signInLauncher = rememberLauncherForActivityResult(
     contract = FirebaseAuthUIActivityResultContract()
   ) { result ->
-    // Gérez le résultat ici
+    // Callback avec le résultat de la connexion
 
     val response = result.idpResponse
     if (result.resultCode == RESULT_OK) {
+
       // Successfully signed in
-      val user = FirebaseAuth.getInstance().currentUser
+      Toast
+        .makeText(context, context.getString(R.string.connexion_ok), Toast.LENGTH_SHORT)
+        .show()
+
+      showMenu = false
+
       // ...
     } else {
       // Sign in failed. If response is null the user canceled the
@@ -81,6 +98,8 @@ fun HomefeedScreen(
     }
 
   }
+
+
   
   Scaffold(
     modifier = modifier,
@@ -112,22 +131,39 @@ fun HomefeedScreen(
             )
             DropdownMenuItem(
               onClick = {
-                // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
-                // Choose authentication providers
-                // Ici : Authenfication mail / mot de passe
-                val providers = arrayListOf(
-                  AuthUI.IdpConfig.EmailBuilder().build(),
-                )
 
-                // Create and launch sign-in intent
-                val signInIntent = AuthUI.getInstance()
-                  .createSignInIntentBuilder()
-                  .setAvailableProviders(providers)
-                  .build()
+                val currentUser = Firebase.auth.currentUser
 
-                signInLauncher.launch(signInIntent)
+                if (currentUser == null){
 
-                // Si l’utilisateu est connecté, redirige vers l’écran de gestion du compte
+                  // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
+
+                  // TODO Denis : Essaie toujours d'ajouter un nouvel utilisateur alors que je voudrais pouvoir me loguer avec un email connu
+
+                  // Ici : Authenfication mail / mot de passe
+                  val providers = arrayListOf(
+                    AuthUI.IdpConfig.EmailBuilder().build(),
+                  )
+
+                  // Create and launch sign-in intent
+                  val signInIntent = AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build()
+
+                  signInLauncher.launch(signInIntent)
+
+                }
+                else{
+
+                  // Si l’utilisateur est connecté, redirige vers l’écran de gestion du compte
+                  onMyAccountClickWithConnectedUser()
+
+                }
+
+
+
+
 
               },
               text = {
@@ -136,6 +172,7 @@ fun HomefeedScreen(
                 )
               }
             )
+
           }
         }
       )
@@ -163,6 +200,7 @@ fun HomefeedScreen(
     )
   }
 }
+
 
 
 

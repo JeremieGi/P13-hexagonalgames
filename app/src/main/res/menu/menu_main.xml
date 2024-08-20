@@ -12,10 +12,12 @@
     app:showAsAction="never"
     />
 
+  <!-- TODO Denis : ce fichier est-il utile (car les menus sont définis dans compose)-->
   <item
       android:id="@+id/action_myaccount"
       android:orderInCategory="101"
       android:title="@string/action_myaccount"
       app:showAsAction="never"
       />
+
 </menu>
