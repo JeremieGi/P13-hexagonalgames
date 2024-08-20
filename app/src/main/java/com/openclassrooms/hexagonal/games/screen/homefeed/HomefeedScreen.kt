@@ -142,6 +142,8 @@ fun HomefeedScreen(
 
                   // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumerattion protection
 
+                  // TODO : Denis : La récupération de mot de passe ne marche pas
+
                   // Ici : Authenfication mail / mot de passe
                   val providers = arrayListOf(
                     AuthUI.IdpConfig.EmailBuilder().build(),

@@ -1,6 +1,8 @@
 package com.openclassrooms.hexagonal.games.screen.userinfoscreen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,4 +26,12 @@ class UserInfoViewModel @Inject constructor(
         return userRepository.isCurrentUserLogged()
     }
 */
+
+    fun signOut(context : Context) : Task<Void> {
+        return userRepository.signOut(context)
+    }
+
+    fun deleteUser(context : Context) : Task<Void> {
+        return userRepository.deleteUser(context)
+    }
 }

@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.screen.userinfoscreen
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
@@ -65,6 +67,8 @@ fun UserInfoScreen(
             modifier = Modifier.padding(contentPadding),
             userDisplayNameP = viewModel.getCurrentUser()?.displayName,
             userEmailP = viewModel.getCurrentUser()?.email,
+            onClickSignOut = viewModel::signOut,
+            onClickDeleteUser = viewModel::deleteUser,
             onBackClick = onBackClick
         )
     }
@@ -76,6 +80,8 @@ private fun UserInfo(
     modifier: Modifier = Modifier,
     userDisplayNameP : String?,
     userEmailP : String ?,
+    onClickSignOut : (Context) -> Task<Void>,
+    onClickDeleteUser : (Context) -> Task<Void>,
     onBackClick: () -> Unit
 ) {
 
@@ -101,8 +107,8 @@ private fun UserInfo(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            AuthUI.getInstance()
-                .signOut(context)
+
+            onClickSignOut(context)
                 .addOnCompleteListener {
                     // méthode qui permet de spécifier une action à exécuter une fois que l'opération signOut() est terminée.
 
@@ -125,6 +131,7 @@ private fun UserInfo(
                         .show()
 
                 }
+
         }) {
             Text(stringResource(id = R.string.SignOut))
         }
@@ -142,8 +149,8 @@ private fun UserInfo(
 
             // Suppression du compte
 
-            AuthUI.getInstance()
-                .delete(context)
+            //AuthUI.getInstance()
+            onClickDeleteUser(context)
                 .addOnCompleteListener { task ->
 
                     if (task.isSuccessful) {
@@ -156,7 +163,6 @@ private fun UserInfo(
 
                     }
                     else{
-
                         val errorMessage = task.exception?.localizedMessage ?: context.getString(R.string.unknowError)
 
                         sErrorDeleteAccount = errorMessage
@@ -195,10 +201,18 @@ private fun UserInfo(
 @Composable
 private fun UserInfoPreview() {
 
+    val mock : (Context) -> Task<Void> = { context ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
+
     HexagonalGamesTheme {
         UserInfo(
             userDisplayNameP = "Jérémie",
             userEmailP = "jeremie.neotic@free.fr",
+            onClickSignOut = mock,
+            onClickDeleteUser = mock,
             onBackClick = {}
         )
     }
