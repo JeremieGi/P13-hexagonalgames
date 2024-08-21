@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -48,32 +47,25 @@ class UserRepository @Inject constructor() {
 
     fun deleteUser(context : Context) : Task<Void> {
 
-        var bDeleteUserOK = false
-        var sErrorUserDeleteInFirestore : String? = null
-
         // Il faut supprimer l'utilisateur en base de données avant
         // (pour qu'il soit encore logué au moment de la suppression,
         // sinon les règles de sécurité de la base ne seront pas respectées, seul l'utilisateur peut supprimer son enregistrement de la abse)
         deleteUserFromFirestore()
             ?.addOnSuccessListener {
                 Log.d("Debug : ","User supprimé de Firestore")
-                bDeleteUserOK = true
             }
             ?.addOnFailureListener { exception ->
                 Log.d("Debug : ","Erreur : User non supprimé dans Firestore : ${exception.localizedMessage}")
-                sErrorUserDeleteInFirestore = exception.localizedMessage
             }
 
         // Si la suppression de l'utilisateur Firestore est réussie,
         // on supprime également l'utilisateur de l'authentification
 
- //       if (bDeleteUserOK && sErrorUserDeleteInFirestore.isEmpty()){
- //       if (bDeleteUserOK && sErrorUserDeleteInFirestore.isEmpty()){
-            return AuthUI.getInstance().delete(context)
-//        }
-//        else{
-//            // TODO Denis : Voir comment je peux remonter l'erreur de Firestore dans la Task renvoyée
-//        }
+
+        return AuthUI.getInstance().delete(context)
+
+    // TODO Denis : Voir comment je peux remonter l'erreur de Firestore dans la Task renvoyée
+    // TODO Denis :  Voir aussi comment exécuter soit les 2 opérations, soit aucune.
 
 
     }
