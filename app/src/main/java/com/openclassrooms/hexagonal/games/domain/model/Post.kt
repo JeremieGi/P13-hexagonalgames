@@ -1,6 +1,5 @@
 package com.openclassrooms.hexagonal.games.domain.model
 
-import com.google.firebase.firestore.ServerTimestamp
 import java.io.Serializable
 
 /**
@@ -32,7 +31,7 @@ data class Post(
   /**
    * Timestamp representing the creation date and time of the Post in milliseconds since epoch.
    */
-  @ServerTimestamp
+  // @ServerTimestamp => java.lang.IllegalArgumentException: Field timestamp is annotated with @ServerTimestamp but is long instead of Date or Timestamp
   val timestamp: Long,
   
   /**
@@ -40,4 +39,6 @@ data class Post(
    */
   val author: User?
 
-) : Serializable
+) : Serializable {
+
+}

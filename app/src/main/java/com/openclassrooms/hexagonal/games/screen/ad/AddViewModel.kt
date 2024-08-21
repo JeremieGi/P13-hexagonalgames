@@ -84,6 +84,8 @@ class AddViewModel @Inject constructor(
    */
   fun addPost() {
 
+    // TODO JG : Ne pas permettre la saisie du post si l'utilisateur n'est pas loggué
+
     // Retrieve the current user
 
     val userParam : User?

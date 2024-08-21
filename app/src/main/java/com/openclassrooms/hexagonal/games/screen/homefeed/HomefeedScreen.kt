@@ -97,7 +97,7 @@ fun HomefeedScreen(
       }
       ?: run {
         // Si errorCode est null, afficher un message d'erreur générique
-        Toast.makeText(context, context.getString(R.string.unknowError), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.loginCancel), Toast.LENGTH_SHORT).show()
       }
 
 
@@ -168,9 +168,6 @@ fun HomefeedScreen(
                   onMyAccountClickWithConnectedUser()
 
                 }
-
-
-
 
 
               },

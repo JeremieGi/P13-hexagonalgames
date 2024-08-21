@@ -36,6 +36,8 @@ class PostFireStoreAPI : PostApi {
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
 
+            // TODO Denis : Si je mets le tél en mode avion, j'ai pas d'erreur
+
             // addSnapshotListener : Ajoute un listener pour écouter les mises à jour en temps réel sur la requête. Chaque fois qu'il y a un changement dans Firestore, ce listener est appelé.
             val listenerRegistration = queryAllPosts.addSnapshotListener { snapshot, firebaseException ->
 
@@ -43,15 +45,35 @@ class PostFireStoreAPI : PostApi {
                     close(firebaseException) // Fermer le flux en cas d'erreur
                     return@addSnapshotListener
                 }
-
+/*
                 if (snapshot != null && !snapshot.isEmpty) {
+
+                    // Marche pas car il me faut un contructeur sans paramètre pour Post
                     val posts = snapshot.toObjects(Post::class.java)
+
                     trySend(posts).isSuccess // Émettre la liste des posts
                 } else {
                     trySend(emptyList()).isSuccess // Émettre une liste vide si aucun post n'est trouvé
                 }
+*/
+
+                // Traiter les documents de la snapshot
+                val posts = snapshot?.documents?.mapNotNull { document ->
+                    try {
+                        val id = document.id
+                        val title = document.getString("title") ?: ""
+                        val b = true
+                        // TODO JG : Continuer ici en créant un Post
+                        //val timestamp = document.getLong("timestamp") ?: 0L
+                        //Post(id, title)
+                    } catch (ex: Exception) {
+                        // Gérer les erreurs de conversion ici
+                        null
+                    }
+                } ?: emptyList()
             }
 
+            // TODO Denis : explication de awaitClose (Si je l'enlève l'appli plante) : java.lang.IllegalStateException: 'awaitClose { yourCallbackOrListener.cancel() }' should be used in the end of callbackFlow block.
             // Cette fonction est appelée lorsque le Flow est annulé
             awaitClose {
                 listenerRegistration.remove()
