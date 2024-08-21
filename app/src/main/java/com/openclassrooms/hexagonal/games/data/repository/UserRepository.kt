@@ -1,8 +1,10 @@
 package com.openclassrooms.hexagonal.games.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
@@ -46,20 +48,37 @@ class UserRepository @Inject constructor() {
 
     fun deleteUser(context : Context) : Task<Void> {
 
-        // Récupère l'UID avant sinon je ne l'aurais plus après suppression de l'utilisateur dans l'authentification
-        val uidAuthentication : String? = this.getCurrentUserUID()
+        var bDeleteUserOK = false
+        var sErrorUserDeleteInFirestore : String? = null
 
-        return AuthUI.getInstance().delete(context)
-            .addOnSuccessListener {
-
-                // Si la suppression de l'utilisateur Firebase Auth est réussie,
-                // on supprime également l'utilisateur de Firestore
-
-                deleteUserFromFirestore(uidAuthentication)
+        // Il faut supprimer l'utilisateur en base de données avant
+        // (pour qu'il soit encore logué au moment de la suppression,
+        // sinon les règles de sécurité de la base ne seront pas respectées, seul l'utilisateur peut supprimer son enregistrement de la abse)
+        deleteUserFromFirestore()
+            ?.addOnSuccessListener {
+                Log.d("Debug : ","User supprimé de Firestore")
+                bDeleteUserOK = true
             }
+            ?.addOnFailureListener { exception ->
+                Log.d("Debug : ","Erreur : User non supprimé dans Firestore : ${exception.localizedMessage}")
+                sErrorUserDeleteInFirestore = exception.localizedMessage
+            }
+
+        // Si la suppression de l'utilisateur Firestore est réussie,
+        // on supprime également l'utilisateur de l'authentification
+
+ //       if (bDeleteUserOK && sErrorUserDeleteInFirestore.isEmpty()){
+ //       if (bDeleteUserOK && sErrorUserDeleteInFirestore.isEmpty()){
+            return AuthUI.getInstance().delete(context)
+//        }
+//        else{
+//            // TODO Denis : Voir comment je peux remonter l'erreur de Firestore dans la Task renvoyée
+//        }
+
+
     }
 
-
+    // TODO Denis : On est vraiment obligé de gérer les utilisateurs dans la base alors qu'on les a dans l'Authenfication
     // Create User in Firestore
     fun insertCurrentUserInFirestore() {
 
@@ -101,17 +120,24 @@ class UserRepository @Inject constructor() {
 
 
     // Delete the User from Firestore
-    private fun deleteUserFromFirestore(uidAuthentication : String?) {
+    private fun deleteUserFromFirestore() : Task<Void>? {
+
+        val uidAuthentication : String? = this.getCurrentUserUID()
+
         if (uidAuthentication!=null){
-            // TODO Denis JG : L'utilisateur n'est pas supprimé de la BD
 
-            val col = getUsersCollection()
-            val doc = col.document(uidAuthentication)
-            doc.delete()
+            // L'utilisateur doit avoir les droits de supprimer un enregistrement de la BD
 
-            //getUsersCollection().document(uidAuthentication).delete()
+//            val col = getUsersCollection()
+//            val doc = col.document(uidAuthentication)
+//            doc.delete()
+
+            return getUsersCollection().document(uidAuthentication).delete()
 
 
+        }
+        else{
+            return null
         }
     }
 
