@@ -218,6 +218,9 @@ private fun HomefeedList(
   posts: List<Post>,
   onPostClick: (Post) -> Unit,
 ) {
+
+  val context = LocalContext.current
+
   LazyColumn(
     modifier = modifier.padding(8.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -228,6 +231,12 @@ private fun HomefeedList(
         onPostClick = onPostClick
       )
     }
+  }
+
+  if (posts.isEmpty()){
+    Toast
+      .makeText(context, stringResource(R.string.no_posts), Toast.LENGTH_SHORT)
+      .show()
   }
 }
 

@@ -23,4 +23,5 @@
   <string name="deleteaccount_ok">Account deleted</string>
   <string name="name">Name: %1$s</string>
   <string name="email">Email: %1$s</string>
+    <string name="no_posts">No posts</string>
 </resources>

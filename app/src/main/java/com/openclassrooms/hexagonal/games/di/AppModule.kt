@@ -1,7 +1,7 @@
 package com.openclassrooms.hexagonal.games.di
 
 import com.openclassrooms.hexagonal.games.data.service.PostApi
-import com.openclassrooms.hexagonal.games.data.service.PostFakeApi
+import com.openclassrooms.hexagonal.games.data.service.PostFireStoreAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +26,8 @@ class AppModule {
   @Provides
   @Singleton
   fun providePostApi(): PostApi {
-    return PostFakeApi()
+    //return PostFakeApi()
+    return PostFireStoreAPI() // Branchement dans l'appli de la base de données FireStore
   }
+
 }

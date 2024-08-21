@@ -13,7 +13,9 @@ import javax.inject.Singleton
  * ensuring there's only one instance throughout the application.
  */
 @Singleton
-class PostRepository @Inject constructor(private val postApi: PostApi) {
+class PostRepository @Inject constructor(
+  private val postApi: PostApi
+) {
   
   /**
    * Retrieves a Flow object containing a list of Posts ordered by creation date
