@@ -6,7 +6,7 @@
   <string name="DeleteAccount">Suppression du compte</string>
   <string name="homefeed_fragment_label">Home</string>
   <string name="add_fragment_label">Ajout d\'une publication</string>
-  <string name="by">Par %1$s %2$s</string>
+  <string name="by">Par %1$s</string>
   <string name="notification_enable">Activer les notifications</string>
   <string name="notification_disable">Désactiver les notifications</string>
   <string name="description_button_add">Ajout</string>

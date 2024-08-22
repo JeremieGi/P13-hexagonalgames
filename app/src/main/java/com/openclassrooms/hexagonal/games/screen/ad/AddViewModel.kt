@@ -112,7 +112,7 @@ class AddViewModel @Inject constructor(
     val userFirebase = userRepository.getCurrentUser()
 
     userParam = if (userFirebase!=null){
-      User(id=userFirebase.uid, firstname = userFirebase.displayName?:"", lastname = "")
+      User(id=userFirebase.uid, firstname = userFirebase.displayName?:"")
     }
     else{
       null

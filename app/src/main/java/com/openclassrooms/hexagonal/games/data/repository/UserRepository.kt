@@ -79,7 +79,7 @@ class UserRepository @Inject constructor() {
 
             val uid = user.uid // Récupération de l'ID créé lors de l'authenfication Firebase
             val firstName = user.displayName ?: ""
-            val userToCreate = User(uid, firstName, "")
+            val userToCreate = User(uid, firstName)
 
             // Utilisateur existant dans la base de données ?
 

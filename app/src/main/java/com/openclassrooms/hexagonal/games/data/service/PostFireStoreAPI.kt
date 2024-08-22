@@ -77,7 +77,7 @@ class PostFireStoreAPI : PostApi {
                             mapAuthor?.let {
                                 val idUser = it["id"] as? String ?: ""
                                 val firstnameUser = it["firstname"] as? String ?: ""
-                                User(idUser, firstnameUser, "")
+                                User(idUser, firstnameUser)
                             }
                         }
 

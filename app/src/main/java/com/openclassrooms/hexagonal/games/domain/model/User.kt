@@ -17,10 +17,6 @@ data class User(
    * User's first name.
    */
   val firstname: String,
-  
-  /**
-   * User's last name.
-   */
-  val lastname: String // TODO JG : Je pense que lastName ne sera plus utile
+
 
 ) : Serializable
