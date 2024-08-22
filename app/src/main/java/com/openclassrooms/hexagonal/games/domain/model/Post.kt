@@ -24,7 +24,8 @@ data class Post(
   val description: String?,
   
   /**
-   * URL of an image associated with the Post, if any.
+   * En lecture, URL : https://firebasestorage.googleapis.com/v0/b/hexagonal-games.appspot.com/o/images%2FpostIDd8681ac9-1dbe-4efd-806d-3d4a33ffee2f.jpg?alt=media&token=58cb3373-8e77-4763-a484-88f31979d755"
+   * Lors de la saisie, ce membre contient le chemin renvoyé par le picker : content://media/picker/0/com.android.providers.media.photopicker/media/1000000035
    */
   val photoUrl: String?,
   

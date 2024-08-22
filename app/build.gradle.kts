@@ -90,4 +90,7 @@ dependencies {
 
   // Firestore = base de données NoSQL
   implementation("com.google.firebase:firebase-firestore")
+
+  // Firebase Storage (Stockage des images)
+  implementation("com.google.firebase:firebase-storage")
 }

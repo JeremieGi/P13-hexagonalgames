@@ -8,10 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.google.firebase.auth.FirebaseAuth
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
@@ -30,7 +26,8 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    
+
+
     setContent {
       val navController = rememberNavController()
       
@@ -55,7 +52,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.Homefeed.route) {
       HomefeedScreen(
         onPostClick = {
-          //TODO
+          //TODO JG
         },
         onSettingsClick = {
           navHostController.navigate(Screen.Settings.route)

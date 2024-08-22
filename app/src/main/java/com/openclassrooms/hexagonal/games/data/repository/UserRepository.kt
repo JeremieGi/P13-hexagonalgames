@@ -70,7 +70,6 @@ class UserRepository @Inject constructor() {
 
     }
 
-    // TODO Denis : On est vraiment obligé de gérer les utilisateurs dans la base alors qu'on les a dans l'Authenfication
     // Create User in Firestore
     fun insertCurrentUserInFirestore() {
 

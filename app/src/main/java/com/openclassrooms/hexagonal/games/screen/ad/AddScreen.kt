@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.screen.ad
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -83,6 +84,7 @@ fun AddScreen(
       onTitleChanged = { viewModel.onAction(FormEvent.TitleChanged(it)) },
       description = post.description ?: "",
       onDescriptionChanged = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
+      onPhotoChanged = { viewModel.onAction(FormEvent.PhotoChanged(it)) },
       onSaveClicked = {
         viewModel.addPost()
         onSaveClick()
@@ -98,6 +100,7 @@ private fun CreatePost(
   onTitleChanged: (String) -> Unit,
   description: String,
   onDescriptionChanged: (String) -> Unit,
+  onPhotoChanged : (Uri?) -> Unit,
   onSaveClicked: () -> Unit,
   error: FormError?
 ) {
@@ -146,14 +149,17 @@ private fun CreatePost(
 
       var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-      // Setup a launcher for the Photo Picker
+      // Callback du mediaPicker
       val pickMediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         selectedImageUri = uri
+        onPhotoChanged(selectedImageUri)
       }
 
       Button(
+        modifier = Modifier.padding(top = 16.dp),
         onClick = {
-          pickMediaLauncher.launch(ImageOnly)
+          // Lancement du media picker (que les images)
+          pickMediaLauncher.launch(PickVisualMediaRequest(ImageOnly))
         }
       ) {
         Text(
@@ -164,10 +170,10 @@ private fun CreatePost(
 
       Spacer(modifier = Modifier.height(16.dp))
 
-      // Si une image est sélectionné
+      // Si une image est sélectionnée
       selectedImageUri?.let { uri ->
         Image(
-          painter = rememberAsyncImagePainter(uri),
+          painter = rememberAsyncImagePainter(uri), //  l'image est chargée et affichée à l'aide de Coil, une bibliothèque populaire pour le chargement d'images dans Compose.
           contentDescription = null,
           modifier = Modifier.size(200.dp),
           contentScale = ContentScale.Crop
@@ -198,6 +204,7 @@ private fun CreatePostPreview() {
       onTitleChanged = { },
       description = "description",
       onDescriptionChanged = { },
+      onPhotoChanged = { },
       onSaveClicked = { },
       error = null
     )
@@ -214,6 +221,7 @@ private fun CreatePostErrorPreview() {
       onTitleChanged = { },
       description = "description",
       onDescriptionChanged = { },
+      onPhotoChanged = { },
       onSaveClicked = { },
       error = FormError.TitleError
     )

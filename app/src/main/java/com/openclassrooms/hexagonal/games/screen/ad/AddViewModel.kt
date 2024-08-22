@@ -63,6 +63,7 @@ class AddViewModel @Inject constructor(
    * @param formEvent The form event to be processed.
    */
   fun onAction(formEvent: FormEvent) {
+
     when (formEvent) {
       is FormEvent.DescriptionChanged -> {
         _post.value = _post.value.copy(
@@ -73,6 +74,12 @@ class AddViewModel @Inject constructor(
       is FormEvent.TitleChanged -> {
         _post.value = _post.value.copy(
           title = formEvent.title
+        )
+      }
+
+      is FormEvent.PhotoChanged -> {
+        _post.value = _post.value.copy(
+          photoUrl = formEvent.photo.toString()
         )
       }
     }

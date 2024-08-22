@@ -223,19 +223,24 @@ private fun HomefeedList(
     modifier = modifier.padding(8.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
+
     items(posts) { post ->
       HomefeedCell(
         post = post,
         onPostClick = onPostClick
       )
     }
+
   }
 
+  // TODO Denis : Au lancement, on passe 2 fois ici : une fois la liste de Post est vide, l'autre elle est remplie...
   if (posts.isEmpty()){
     Toast
       .makeText(context, stringResource(R.string.no_posts), Toast.LENGTH_SHORT)
       .show()
   }
+
+
 }
 
 @Composable
@@ -264,6 +269,7 @@ private fun HomefeedCell(
         style = MaterialTheme.typography.titleLarge
       )
       if (!post.photoUrl.isNullOrEmpty()) {
+
         AsyncImage(
           modifier = Modifier
             .padding(top = 8.dp)
@@ -278,9 +284,12 @@ private fun HomefeedCell(
           contentDescription = "image",
           contentScale = ContentScale.Crop,
         )
+
       }
       if (!post.description.isNullOrEmpty()) {
         Text(
+          modifier = Modifier
+            .padding(top = 8.dp),
           text = post.description,
           style = MaterialTheme.typography.bodyMedium
         )
