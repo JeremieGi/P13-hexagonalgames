@@ -52,7 +52,7 @@ fun AddScreen(
   modifier: Modifier = Modifier,
   viewModel: AddViewModel = hiltViewModel(),
   onBackClick: () -> Unit,
-  onSaveClick: () -> Unit
+  onBackAfterSaveClick: () -> Unit
 ) {
   Scaffold(
     modifier = modifier,
@@ -87,7 +87,7 @@ fun AddScreen(
       onPhotoChanged = { viewModel.onAction(FormEvent.PhotoChanged(it)) },
       onSaveClicked = {
         viewModel.addPost()
-        onSaveClick()
+        onBackAfterSaveClick()
       }
     )
   }
@@ -137,15 +137,7 @@ private fun CreatePost(
           color = MaterialTheme.colorScheme.error,
         )
       }
-      OutlinedTextField(
-        modifier = Modifier
-          .padding(top = 16.dp)
-          .fillMaxWidth(),
-        value = description,
-        onValueChange = { onDescriptionChanged(it) },
-        label = { Text(stringResource(id = R.string.hint_description)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-      )
+
 
       var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -154,6 +146,25 @@ private fun CreatePost(
         selectedImageUri = uri
         onPhotoChanged(selectedImageUri)
       }
+
+
+      OutlinedTextField(
+        modifier = Modifier
+          .padding(top = 16.dp)
+          .fillMaxWidth(),
+        value = description,
+        isError = error is FormError.DescriptionOrPictureError,
+        onValueChange = { onDescriptionChanged(it) },
+        label = { Text(stringResource(id = R.string.hint_description)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+      )
+      if (error is FormError.DescriptionOrPictureError) {
+        Text(
+          text = stringResource(id = error.messageRes),
+          color = MaterialTheme.colorScheme.error,
+        )
+      }
+
 
       Button(
         modifier = Modifier.padding(top = 16.dp),
@@ -183,7 +194,7 @@ private fun CreatePost(
 
     }
     Button(
-      enabled = error == null,
+      enabled = (error == null),
       onClick = { onSaveClicked() }
     ) {
       Text(

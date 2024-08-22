@@ -77,9 +77,22 @@ class AddViewModel @Inject constructor(
         )
       }
 
+
+
       is FormEvent.PhotoChanged -> {
+
+        // formEvent.photo.toString() => Si nul renvoie la chaine "null" => pas bon
+
+        val sPhotoURL : String?
+        if (formEvent.photo==null){
+          sPhotoURL = null
+        }
+        else{
+          sPhotoURL = formEvent.photo.toString()
+        }
+
         _post.value = _post.value.copy(
-          photoUrl = formEvent.photo.toString()
+          photoUrl = sPhotoURL
         )
       }
     }
@@ -107,7 +120,6 @@ class AddViewModel @Inject constructor(
 
     postRepository.addPost(
       _post.value.copy(
-        //author = User("1", "Gerry", "Ariella")
         author = userParam
       )
     )
@@ -120,11 +132,20 @@ class AddViewModel @Inject constructor(
    * @return A FormError.TitleError if title is empty, null otherwise.
    */
   private fun verifyPost(): FormError? {
-    return if (_post.value.title.isEmpty()) {
-      FormError.TitleError
-    } else {
-      null
+
+    // Titre obligatoire
+    if (_post.value.title.isEmpty()){
+      return FormError.TitleError
     }
+
+    // Le post doit contenir une description ou une photo
+    if ( _post.value.description.isNullOrEmpty() &&  _post.value.photoUrl.isNullOrEmpty()){
+      return FormError.DescriptionOrPictureError
+    }
+
+    return null // Pas d'erreur
+
+
   }
   
 }

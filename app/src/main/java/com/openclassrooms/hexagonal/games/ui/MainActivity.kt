@@ -68,7 +68,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.AddPost.route) {
       AddScreen(
         onBackClick = { navHostController.navigateUp() },
-        onSaveClick = { navHostController.navigateUp() }
+        onBackAfterSaveClick = { navHostController.navigateUp() }
       )
     }
     composable(route = Screen.Settings.route) {

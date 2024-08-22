@@ -17,6 +17,7 @@
   <string name="contentDescription_more">Plus</string>
   <string name="contentDescription_notification_icon">Notification icon</string>
   <string name="error_title">Titre non valide</string>
+  <string name="error_description_or_photo">Le post doit contenir une description ou une photo</string>
   <string name="deconnexion_ok">Déconnexion OK</string>
   <string name="connexion_ok">Connexion OK</string>
   <string name="unknowError">Une erreur inconnue s\'est produite.</string>
