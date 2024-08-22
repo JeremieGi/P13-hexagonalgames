@@ -4,6 +4,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -22,10 +23,7 @@ class PostFireStoreAPI : PostApi {
 
     private fun getAllPosts(): Query {
         return this.getPostCollection()
-//            .document(chat)
-//            .collection(MESSAGE_COLLECTION)
             .orderBy("timestamp", Query.Direction.DESCENDING)
- //           .limit(50)
     }
 
 
@@ -62,15 +60,29 @@ class PostFireStoreAPI : PostApi {
                     try {
                         val id = document.id
                         val title = document.getString("title") ?: ""
-                        val b = true
-                        // TODO JG : Continuer ici en créant un Post
-                        //val timestamp = document.getLong("timestamp") ?: 0L
-                        //Post(id, title)
+                        val desc = document.getString("description") ?: ""
+                        val photoURL = document.getString("photoURL") ?: ""
+                        val timestamp = document.getLong("timestamp") ?: 0L
+
+                        val userAuthor: User? = document.get("author")?.let { authorMap ->     // let permet de travailler sur l'auteur que si la valeur est renseignée
+                            // TODO Denis : Warning sur la ligne ci-dessous
+                            val mapAuthor = authorMap as? Map<String, Any>                     // 3 éléments indicés par le nom de la rubrique
+                            mapAuthor?.let {
+                                val idUser = it["id"] as? String ?: ""
+                                val firstnameUser = it["firstname"] as? String ?: ""
+                                User(idUser, firstnameUser, "")
+                            }
+                        }
+
+                        Post(id, title, desc, photoURL, timestamp, userAuthor)
+
                     } catch (ex: Exception) {
                         // Gérer les erreurs de conversion ici
                         null
                     }
                 } ?: emptyList()
+
+                trySend(posts).isSuccess // Émettre la liste des posts (Equivalent de emit dans un callbackFlow)
             }
 
             // TODO Denis : explication de awaitClose (Si je l'enlève l'appli plante) : java.lang.IllegalStateException: 'awaitClose { yourCallbackOrListener.cancel() }' should be used in the end of callbackFlow block.
