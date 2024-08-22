@@ -15,13 +15,13 @@ import com.google.firebase.storage.storage
 
 class PostFireStoreAPI : PostApi {
 
-    // TODO Denis : Companion object utile dans un Singleton ?
     companion object {
         private const val COLLECTION_POSTS : String = "posts"
     }
 
-
+    // Variable globale de Firebase Storage (pour stocker les images)
     private val _storageRef = Firebase.storage.reference
+
 
     private fun getPostCollection(): CollectionReference {
         return FirebaseFirestore.getInstance().collection(COLLECTION_POSTS)
@@ -32,7 +32,7 @@ class PostFireStoreAPI : PostApi {
             .orderBy("timestamp", Query.Direction.DESCENDING)
     }
 
-    // TODO Denis : Revue de getPostsOrderByCreationDateDesc
+    // TODO Denis 1 : Revue de getPostsOrderByCreationDateDesc
 
     override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> {
 
@@ -109,7 +109,7 @@ class PostFireStoreAPI : PostApi {
 
     override fun addPost(post: Post) {
 
-        // TODO Denis : Voir comment bien gérer les cas d'exceptions
+        // TODO Denis 2 : addPost : Voir comment bien gérer les cas d'exceptions (throw ? Task ?)
 
         // Si une photo est présente, il faut l'uploader
         if (post.photoUrl != null){

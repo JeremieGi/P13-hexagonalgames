@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepository @Inject constructor() {
 
-    // TODO Denis : Companion object utile dans un Singleton ?
+    // Companion object pertinent même dans un Singleton pour stocker les constantes indépendantes de l'instance
     companion object {
         private const val COLLECTION_USERS: String = "users"
     }

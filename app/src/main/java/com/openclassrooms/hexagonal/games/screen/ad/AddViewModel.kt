@@ -104,10 +104,6 @@ class AddViewModel @Inject constructor(
    */
   fun addPost() {
 
-    // TODO JG : Ne pas permettre la saisie du post si l'utilisateur n'est pas loggué
-
-    // Retrieve the current user
-
     val userParam : User?
     val userFirebase = userRepository.getCurrentUser()
 
@@ -115,7 +111,7 @@ class AddViewModel @Inject constructor(
       User(id=userFirebase.uid, firstname = userFirebase.displayName?:"")
     }
     else{
-      null
+      null // Gérer en amont : Un compte est nécessaire pour ajouter un commentaire
     }
 
     postRepository.addPost(

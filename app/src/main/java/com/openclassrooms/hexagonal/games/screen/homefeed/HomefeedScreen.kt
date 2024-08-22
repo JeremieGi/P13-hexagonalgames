@@ -186,7 +186,17 @@ fun HomefeedScreen(
     floatingActionButton = {
       FloatingActionButton(
         onClick = {
-          onFABClick()
+
+          if (viewModel.isCurrentUserLogged()){
+            onFABClick()
+          }
+          else{
+            Toast
+              .makeText(context, context.getString(R.string.needlogin), Toast.LENGTH_SHORT)
+              .show()
+          }
+
+
         }
       ) {
         Icon(
