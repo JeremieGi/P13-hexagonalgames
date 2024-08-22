@@ -93,4 +93,8 @@ dependencies {
 
   // Firebase Storage (Stockage des images)
   implementation("com.google.firebase:firebase-storage")
+
+  // Firebase -> système de notification
+  implementation("com.google.firebase:firebase-messaging")
+
 }
