@@ -1,9 +1,17 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -20,8 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -29,6 +41,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
@@ -88,6 +101,8 @@ private fun CreatePost(
   onSaveClicked: () -> Unit,
   error: FormError?
 ) {
+
+
   val scrollState = rememberScrollState()
   
   Column(
@@ -128,6 +143,38 @@ private fun CreatePost(
         label = { Text(stringResource(id = R.string.hint_description)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
       )
+
+      var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+      // Setup a launcher for the Photo Picker
+      val pickMediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        selectedImageUri = uri
+      }
+
+      Button(
+        onClick = {
+          pickMediaLauncher.launch(ImageOnly)
+        }
+      ) {
+        Text(
+          modifier = Modifier.padding(8.dp),
+          text = stringResource(id = R.string.action_selectPhoto)
+        )
+      }
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      // Si une image est sélectionné
+      selectedImageUri?.let { uri ->
+        Image(
+          painter = rememberAsyncImagePainter(uri),
+          contentDescription = null,
+          modifier = Modifier.size(200.dp),
+          contentScale = ContentScale.Crop
+        )
+      }
+
+
     }
     Button(
       enabled = error == null,

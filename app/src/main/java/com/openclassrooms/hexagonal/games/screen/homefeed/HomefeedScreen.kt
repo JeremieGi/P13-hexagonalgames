@@ -156,7 +156,7 @@ fun HomefeedScreen(
                   val signInIntent = AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
-                    //.setAlwaysShowSignInMethodScreen(true) // Affiche la fenêtre Sign in with ...
+                    //.setAlwaysShowSignInMethodScreen(true) // Affiche la fenêtre Sign in with (même si ici on a que le provider email/password ...)
                     .build()
 
                   signInLauncher.launch(signInIntent)
@@ -196,6 +196,7 @@ fun HomefeedScreen(
       }
     }
   ) { contentPadding ->
+
     val posts by viewModel.posts.collectAsStateWithLifecycle()
     
     HomefeedList(

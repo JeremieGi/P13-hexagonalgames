@@ -26,6 +26,7 @@ class PostFireStoreAPI : PostApi {
             .orderBy("timestamp", Query.Direction.DESCENDING)
     }
 
+    // TODO Denis : Revue de getPostsOrderByCreationDateDesc
 
     override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> {
 
@@ -82,13 +83,18 @@ class PostFireStoreAPI : PostApi {
                     }
                 } ?: emptyList()
 
-                trySend(posts).isSuccess // Émettre la liste des posts (Equivalent de emit dans un callbackFlow)
+                // Émettre la liste des posts (Equivalent de emit dans un callbackFlow)
+                val result = trySend(posts)
+                if (result.isFailure) {
+                    close(result.exceptionOrNull())
+                }
+
             }
 
             // TODO Denis : explication de awaitClose (Si je l'enlève l'appli plante) : java.lang.IllegalStateException: 'awaitClose { yourCallbackOrListener.cancel() }' should be used in the end of callbackFlow block.
             // Cette fonction est appelée lorsque le Flow est annulé
             awaitClose {
-                listenerRegistration.remove()
+                listenerRegistration.remove() // Suppression du listener mais comment le remettre ensuite ?
             }
         }
 

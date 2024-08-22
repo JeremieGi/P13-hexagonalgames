@@ -23,6 +23,7 @@
   <string name="deleteaccount_ok">Account deleted</string>
   <string name="name">Name: %1$s</string>
   <string name="email">Email: %1$s</string>
-    <string name="no_posts">No posts</string>
-    <string name="loginCancel">Login process cancelled by user</string>
+  <string name="no_posts">No posts</string>
+  <string name="loginCancel">Login process cancelled by user</string>
+  <string name="action_selectPhoto">Select a photo</string>
 </resources>
