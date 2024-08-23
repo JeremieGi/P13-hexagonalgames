@@ -13,4 +13,6 @@ sealed class Screen(
   data object Settings : Screen("settings")
 
   data object UserInfo : Screen("userInfo")
+
+  data object PostDetail : Screen("postDetail")
 }

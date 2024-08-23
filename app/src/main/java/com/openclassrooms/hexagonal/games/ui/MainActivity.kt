@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.screen.Screen
 import com.openclassrooms.hexagonal.games.screen.ad.AddScreen
 import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
+import com.openclassrooms.hexagonal.games.screen.postdetails.PostDetailScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
 import com.openclassrooms.hexagonal.games.screen.userinfoscreen.UserInfoScreen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
@@ -78,6 +79,13 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     }
     composable(route = Screen.UserInfo.route) {
       UserInfoScreen(
+        onBackClick = { navHostController.navigateUp() }
+      )
+    }
+
+    // TODO JG => Passer un argument
+    composable(route = Screen.PostDetail.route) {
+      PostDetailScreen(
         onBackClick = { navHostController.navigateUp() }
       )
     }
