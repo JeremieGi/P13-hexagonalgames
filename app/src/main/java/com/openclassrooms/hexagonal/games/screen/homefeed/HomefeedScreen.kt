@@ -48,6 +48,7 @@ import coil.util.DebugLogger
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
@@ -205,13 +206,31 @@ fun HomefeedScreen(
     }
   ) { contentPadding ->
 
-    val posts by viewModel.posts.collectAsStateWithLifecycle()
-    
-    HomefeedList(
-      modifier = modifier.padding(contentPadding),
-      posts = posts,
-      onPostClick = onPostClick
-    )
+    val postsStateFlow by viewModel.postsStateFlow.collectAsStateWithLifecycle()
+
+    when(val result = postsStateFlow){
+
+      is ResultCustom.Loading -> {
+
+      }
+
+      is ResultCustom.Success -> {
+
+        HomefeedList(
+          modifier = modifier.padding(contentPadding),
+          posts = result.value,
+          onPostClick = onPostClick
+        )
+
+      }
+
+      is ResultCustom.Failure -> {
+
+      }
+
+    }
+
+
   }
 }
 

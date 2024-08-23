@@ -3,6 +3,7 @@ package com.openclassrooms.hexagonal.games.screen.homefeed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,20 +24,43 @@ class HomefeedViewModel @Inject constructor(
 ) :
   ViewModel() {
   
-  private val _posts: MutableStateFlow<List<Post>> = MutableStateFlow(emptyList())
+  private val _postsStateFlow : MutableStateFlow<ResultCustom<List<Post>>> = MutableStateFlow(ResultCustom.Loading)
   
   /**
    * Returns a Flow observable containing the list of posts fetched from the repository.
    *
    * @return A Flow<List<Post>> object that can be observed for changes.
    */
-  val posts: StateFlow<List<Post>>
-    get() = _posts
+  val postsStateFlow: StateFlow<ResultCustom<List<Post>>>
+    get() = _postsStateFlow
   
   init {
     viewModelScope.launch {
-      postRepository.posts.collect {
-        _posts.value = it
+
+      postRepository.flowPost.collect {
+
+        _postsStateFlow.value = it
+
+        /*
+        when(it) {
+
+          is ResultCustom.Loading -> {
+
+          }
+
+          is ResultCustom.Success -> {
+            _postsStateFlow.value = it
+          }
+
+          is ResultCustom.Failure -> {
+
+          }
+
+
+        }
+        */
+
+
       }
     }
   }

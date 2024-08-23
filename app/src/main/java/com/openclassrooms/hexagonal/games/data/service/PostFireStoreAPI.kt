@@ -34,22 +34,25 @@ class PostFireStoreAPI : PostApi {
             .orderBy("timestamp", Query.Direction.DESCENDING)
     }
 
-    // TODO Denis 1 : Revue de getPostsOrderByCreationDateDesc
-    // TODO JG : Scroll vers le haut => rappelle cette méthode
-    override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> /*<ResultCustom<List<Post>>>*/ {
+
+    override fun getPostsOrderByCreationDateDesc(): Flow<ResultCustom<List<Post>>> {
 
         val queryAllPosts = getAllPosts()
 
+        // TODO JG : Test à faire : Si je mets le tél en mode avion ?
+
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
-
-            // TODO Denis : Si je mets le tél en mode avion, j'ai pas d'erreur
 
             // addSnapshotListener : Ajoute un listener pour écouter les mises à jour en temps réel sur la requête. Chaque fois qu'il y a un changement dans Firestore, ce listener est appelé.
             val listenerRegistration = queryAllPosts.addSnapshotListener { snapshot, firebaseException ->
 
                 if (firebaseException != null) {
+
+                    trySend(ResultCustom.Failure(firebaseException.message))
+
                     close(firebaseException) // Fermer le flux en cas d'erreur
+
                     return@addSnapshotListener
                 }
 
@@ -57,19 +60,20 @@ class PostFireStoreAPI : PostApi {
 
                 if (snapshot != null && !snapshot.isEmpty) {
 
-                    // Marche pas car il me faut un contructeur sans paramètre pour Post
-                    // TODO JG : Faire un contructeur vide = mettre des paramètres par défaut
+                    // Utiliser toObjects necessite un constructeur par défaut pour tous les objets associés (Post et User ici)
+                    // J'ai du ajouter des paramètres par défaut aux 2 data class
                     val posts = snapshot.toObjects(Post::class.java)
 
-                    result = trySend(posts) // Émettre la liste des posts
+                    result = trySend(ResultCustom.Success(posts)) // Émettre la liste des posts
 
                 } else {
 
-                    result = trySend(emptyList()) // Émettre une liste vide si aucun post n'est trouvé
+                    result = trySend(ResultCustom.Success(emptyList())) // Émettre une liste vide si aucun post n'est trouvé
 
                 }
 
                 if (result.isFailure) {
+                    trySend(ResultCustom.Failure(result.toString()))
                     close(result.exceptionOrNull())
                 }
 

@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.data.service
 
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.flow.Flow
 
@@ -14,8 +15,9 @@ interface PostApi {
    *
    * @return A list of Posts sorted by creation date (newest first).
    */
-  fun getPostsOrderByCreationDateDesc(): Flow<List<Post>>
-  
+  //fun getPostsOrderByCreationDateDesc(): Flow<List<Post>>
+  fun getPostsOrderByCreationDateDesc(): Flow<ResultCustom<List<Post>>> // Nouvelle signature pour gestion des erreurs
+
   /**
    * Adds a new Post to the data source.
    *
