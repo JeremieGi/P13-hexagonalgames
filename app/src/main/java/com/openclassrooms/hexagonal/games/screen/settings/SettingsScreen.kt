@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.screen.settings
 
+
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -58,8 +60,12 @@ fun SettingsScreen(
       )
     }
   ) { contentPadding ->
+
+    //val context = LocalContext.current
+
     Settings(
       modifier = Modifier.padding(contentPadding),
+      //bNotificationEnableP = viewModel.notificationsAreEnable(context),
       onNotificationDisabledClicked = { viewModel.disableNotifications() },
       onNotificationEnabledClicked = {
         viewModel.enableNotifications()
@@ -73,8 +79,12 @@ fun SettingsScreen(
 private fun Settings(
   modifier: Modifier = Modifier,
   onNotificationEnabledClicked: () -> Unit,
-  onNotificationDisabledClicked: () -> Unit
+  onNotificationDisabledClicked: () -> Unit,
+  //bNotificationEnableP : Boolean
 ) {
+
+
+
   val notificationsPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     rememberPermissionState(
       android.Manifest.permission.POST_NOTIFICATIONS
@@ -82,9 +92,11 @@ private fun Settings(
   } else {
     null
   }
+
+  //var bEnable by remember { mutableStateOf(bNotificationEnableP) }
   
   Column(
-    modifier = Modifier.fillMaxSize(),
+    modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceEvenly
   ) {
@@ -94,6 +106,14 @@ private fun Settings(
       tint = MaterialTheme.colorScheme.onSurface,
       contentDescription = stringResource(id = R.string.contentDescription_notification_icon)
     )
+
+//    if (bEnable){
+//      Text("Notification activée")
+//    }
+//    else{
+//      Text("Notification désactivée")
+//    }
+
     Button(
       onClick = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -103,12 +123,17 @@ private fun Settings(
         }
         
         onNotificationEnabledClicked()
+
+        //bEnable = true
       }
     ) {
       Text(text = stringResource(id = R.string.notification_enable))
     }
     Button(
-      onClick = { onNotificationDisabledClicked() }
+      onClick = {
+        onNotificationDisabledClicked()
+        //bEnable = false
+      }
     ) {
       Text(text = stringResource(id = R.string.notification_disable))
     }
@@ -122,7 +147,8 @@ private fun SettingsPreview() {
   HexagonalGamesTheme {
     Settings(
       onNotificationEnabledClicked = { },
-      onNotificationDisabledClicked = { }
+      onNotificationDisabledClicked = { },
+      //bNotificationEnableP = true
     )
   }
 }
