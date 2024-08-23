@@ -272,7 +272,6 @@ private fun HomefeedList(
 
   }
 
-  // TODO Denis : Au lancement, on passe 2 fois ici : une fois la liste de Post est vide, l'autre elle est remplie...
   if (posts.isEmpty()){
     Toast
       .makeText(context, stringResource(R.string.no_posts), Toast.LENGTH_SHORT)
