@@ -31,9 +31,12 @@ class PostRepository @Inject constructor(
    * Adds a new Post to the data source using the injected PostApi.
    *
    * @param post The Post object to be added.
+   * @return
    */
-  fun addPost(post: Post?) {
-    postApi.addPost(post!!)
+  fun addPost(post: Post): Flow<ResultCustom<String>> {
+
+    return postApi.addPost(post)
+
   }
 
   fun loadPost() {

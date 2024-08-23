@@ -3,6 +3,7 @@ package com.openclassrooms.hexagonal.games.screen.ad
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
@@ -10,8 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
@@ -45,7 +48,13 @@ class AddViewModel @Inject constructor(
    */
   val post: StateFlow<Post>
     get() = _post
-  
+
+
+  // UI state - Résultat du post
+  private val _uiStatePostResult = MutableStateFlow<ResultCustom<String>?>(null)
+  val uiStatePostResult: StateFlow<ResultCustom<String>?> = _uiStatePostResult.asStateFlow() // Accès en lecture seule de l'extérieur
+
+
   /**
    * StateFlow derived from the post that emits a FormError if the title is empty, null otherwise.
    */
@@ -114,11 +123,20 @@ class AddViewModel @Inject constructor(
       null // Gérer en amont : Un compte est nécessaire pour ajouter un commentaire
     }
 
-    postRepository.addPost(
-      _post.value.copy(
-        author = userParam
-      )
-    )
+    val postWithAuthor = _post.value.copy(author = userParam)
+
+//    postRepository.addPost(postWithAuthor).onEach { resultPost ->
+//      _uiStatePostResult.value = resultPost
+//    }
+
+    viewModelScope.launch {
+      postRepository.addPost(postWithAuthor).collect { result ->
+        _uiStatePostResult.value = result
+      }
+    }
+
+
+
   }
   
   /**

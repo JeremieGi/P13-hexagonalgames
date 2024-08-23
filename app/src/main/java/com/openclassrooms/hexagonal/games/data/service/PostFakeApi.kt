@@ -84,8 +84,21 @@ class PostFakeApi : PostApi {
   }
 
   
-  override fun addPost(post: Post) {
-    posts.value.add(0, post)
+  override fun addPost(post: Post) : Flow<ResultCustom<String>> {
+
+    return callbackFlow {
+
+      posts.value.add(0, post)
+      trySend(ResultCustom.Success(""))
+
+      // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+      awaitClose {
+
+      }
+
+    }
+
+
   }
   
 }

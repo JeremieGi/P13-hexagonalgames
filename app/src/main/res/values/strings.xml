@@ -35,4 +35,5 @@
   <string name="close">Close</string>
   <string name="unknown_error">Unknown error</string>
   <string name="nologinuser">No user login</string>
+    <string name="post_envoy">Post envoyé</string>
 </resources>

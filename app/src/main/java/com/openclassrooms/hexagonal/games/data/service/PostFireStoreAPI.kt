@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.data.service
 
+
 import android.net.Uri
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
@@ -81,89 +82,131 @@ class PostFireStoreAPI : PostApi {
 
             }
 
-            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            // awaitClose : Permet d'exécuter du code quand le flow n'est plus écouté
             awaitClose {
-                listenerRegistration.remove()
+                listenerRegistration.remove() // Ferme le listener pour éviter une fuite mémoire
             }
-
 
         }
 
     }
 
 
-    override fun addPost(post: Post) {
+    override fun addPost(post: Post) : Flow<ResultCustom<String>> {
 
-        // TODO Denis 2 : addPost : Voir comment bien gérer les cas d'exceptions (throw ? Task ?)
+        // TODO Denis : En mode avion, je n'ai pas d'erreur => il ne se passe rien
+        // mais les posts (sans images) sont ajoutés dès que la connexion revient
+        // Comment indiquer çà à l'utilisateur ?
 
-        // Si une photo est présente, il faut l'uploader
-        if (post.photoUrl != null){
+        // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
+        return callbackFlow {
 
-            // Récupération du content (content://media/picker/0/com.android.providers.media.photopicker/media/1000000035)
-            // dans une URI
-            val uri = Uri.parse(post.photoUrl)
+            try {
 
-            // Référence vers le fichier distant
-            val storageRefImage = _storageRef.child("images/postID${post.id}.jpg")
+                // On rentre ici, que si un collector est présent sur le Flow
 
-            // Upload
-            val uploadTask = storageRefImage.putFile(uri)
+                // Si une photo est présente, il faut l'uploader
+                if (post.photoUrl != null){
 
-            // Observer les résultats de l'upload
-            uploadTask
-                .addOnFailureListener { exception ->
+                    // Récupération du content (content://media/picker/0/com.android.providers.media.photopicker/media/1000000035)
+                    // dans une URI
+                    val uri = Uri.parse(post.photoUrl)
 
-                    // Gestion des erreurs lors de l'upload
-                    println("Upload failed: ${exception.message}")
+                    // Référence vers le fichier distant
+                    val storageRefImage = _storageRef.child("images/postID${post.id}.jpg")
 
-                }
-                .addOnSuccessListener { taskSnapshot ->
+                    // Upload
+                    val uploadTask = storageRefImage.putFile(uri)
 
-                    // Récupérer l'URL de téléchargement de l'image
-                    storageRefImage.downloadUrl
-                        .addOnSuccessListener { uri ->
+                    // Observer les résultats de l'upload
+                    uploadTask
+                        .addOnFailureListener { exception ->
 
-                            // Mettre à jour l'objet Post avec l'URL de l'image
-                            val updatedPost = post.copy(photoUrl = uri.toString())
-
-                            // Ajouter le post dans Firestore
-                            getPostCollection().add(updatedPost)
-                                .addOnSuccessListener {
-                                    // Succès de l'ajout dans Firestore
-                                    println("Post added successfully to Firestore")
-                                }
-                                .addOnFailureListener { firestoreException ->
-                                    // Gestion des erreurs lors de l'ajout dans Firestore
-                                    println("Failed to add post to Firestore: ${firestoreException.message}")
-                                }
+                            // Gestion des erreurs lors de l'upload
+                            trySend(ResultCustom.Failure("Upload failed: ${exception.message}"))
 
                         }
+                        .addOnSuccessListener { taskSnapshot ->
 
-                        .addOnFailureListener { urlException ->
-                            // Gestion des erreurs lors de la récupération de l'URL de téléchargement
-                            println("Failed to get download URL: ${urlException.message}")
+                            // Récupérer l'URL de téléchargement de l'image
+                            storageRefImage.downloadUrl
+                                .addOnSuccessListener { uri ->
+
+                                    // Mettre à jour l'objet Post avec l'URL de l'image
+                                    val updatedPost = post.copy(photoUrl = uri.toString())
+
+                                    // Ajouter le post dans Firestore
+                                    getPostCollection().add(updatedPost)
+                                        .addOnSuccessListener {
+                                            // Succès de l'ajout dans Firestore
+                                            trySend(ResultCustom.Success("Post OK"))
+                                        }
+                                        .addOnFailureListener { firestoreException ->
+                                            // Gestion des erreurs lors de l'ajout dans Firestore
+                                            trySend(ResultCustom.Failure("Failed to add post to Firestore: ${firestoreException.message}"))
+                                        }
+
+                                        .addOnCanceledListener {
+                                            trySend(ResultCustom.Failure("addOnCanceledListener"))
+                                        }
+
+                                }
+
+                                .addOnFailureListener { urlException ->
+                                    // Gestion des erreurs lors de la récupération de l'URL de téléchargement
+                                    trySend(ResultCustom.Failure("Failed to get download URL: ${urlException.message}"))
+                                }
+
+                                .addOnCanceledListener {
+                                    trySend(ResultCustom.Failure("addOnCanceledListener"))
+                                }
+
+
                         }
+                        .addOnCanceledListener {
+                            trySend(ResultCustom.Failure("addOnCanceledListener"))
+                        }
+                        .addOnPausedListener {
+                            trySend(ResultCustom.Failure("addOnPausedListener"))
+                        }
+                        .addOnProgressListener {
+                            trySend(ResultCustom.Failure("addOnProgressListener"))
+                        }
+
+
+                }
+                else {
+                    // Aucune photo
+
+                    // Si aucune photo n'est présente, ajouter directement le post dans Firestore
+                    getPostCollection().add(post)
+                        .addOnSuccessListener {
+                            // Succès de l'ajout dans Firestore
+                            trySend(ResultCustom.Success("Post OK")) // TODO Denis : Si je veux utiliser les ressources String ici, je suis obligé de passer le context en paramètre ?
+                        }
+                        .addOnFailureListener { firestoreException ->
+                            // Gestion des erreurs lors de l'ajout dans Firestore
+                            trySend(ResultCustom.Failure("Failed to add post to Firestore: ${firestoreException.message}"))
+                        }
+                        .addOnCanceledListener {
+                            trySend(ResultCustom.Failure("addOnCanceledListener"))
+                        }
+
+
                 }
 
+
+            } catch (e: Exception) {
+                trySend(ResultCustom.Failure("Exception occurred: ${e.message}"))
+            }
+
+
+
+            // awaitClose : Permet d'exécuter du code quand le flow n'est plus écouté
+            awaitClose {
+
+            }
         }
-        else {
-            // Aucune photo
-
-            // Si aucune photo n'est présente, ajouter directement le post dans Firestore
-            getPostCollection().add(post)
-                .addOnSuccessListener {
-                    // Succès de l'ajout dans Firestore
-                    println("Post added successfully to Firestore")
-                }
-                .addOnFailureListener { firestoreException ->
-                    // Gestion des erreurs lors de l'ajout dans Firestore
-                    println("Failed to add post to Firestore: ${firestoreException.message}")
-                }
-
-        }
-
-
-
 
 
     }

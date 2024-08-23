@@ -20,7 +20,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.hexagonal.games.R
@@ -73,18 +73,15 @@ fun UserInfoScreen(
 
 
         // Obtenir le résultat de la suppression de l'utilisateur
-        val deleteUserResult = produceState<ResultCustom<String>?>(initialValue = null, key1 = context) {
-            viewModel.deleteUser(context).collect { result ->
-                value = result
-            }
-        }
+
+        val deleteUserResult by viewModel.uiStateUserDeleteResult.collectAsStateWithLifecycle()
 
         UserInfo(
             modifier = Modifier.padding(contentPadding),
             userDisplayNameP = viewModel.getCurrentUser()?.displayName,
             userEmailP = viewModel.getCurrentUser()?.email,
             onClickSignOut = viewModel::signOut,
-            resultUiStateDeleteUser = deleteUserResult.value,
+            resultUiStateDeleteUser = deleteUserResult,
             onClickDeleteUser = { viewModel.deleteUser(context) },
             onBackClick = onBackClick
         )
@@ -109,7 +106,7 @@ private fun UserInfo(
     var sErrorDeleteAccount by rememberSaveable { mutableStateOf("") }
 
     // Gérer les différents états du résultat de suppression de l'utilisateur
-    when (val result = resultUiStateDeleteUser) {
+    when (resultUiStateDeleteUser) {
 
         is ResultCustom.Loading -> {
             LoadingComposable()
@@ -118,7 +115,7 @@ private fun UserInfo(
         is ResultCustom.Success -> {
             // Afficher un message de succès et fermer l'activity
             Toast
-                .makeText(context, result.value, Toast.LENGTH_SHORT)
+                .makeText(context, resultUiStateDeleteUser.value, Toast.LENGTH_SHORT)
                 .show()
 
             onBackClick()
@@ -126,7 +123,7 @@ private fun UserInfo(
 
         is ResultCustom.Failure -> {
             // Afficher un message d'erreur
-            val errorMessage =  result.errorMessage ?: context.getString(R.string.unknowError)
+            val errorMessage =  resultUiStateDeleteUser.errorMessage ?: context.getString(R.string.unknowError)
             sErrorDeleteAccount = errorMessage
         }
 

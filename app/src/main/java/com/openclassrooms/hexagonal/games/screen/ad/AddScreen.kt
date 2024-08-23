@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -44,6 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
+import com.openclassrooms.hexagonal.games.screen.homefeed.LoadingComposable
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +80,9 @@ fun AddScreen(
   ) { contentPadding ->
     val post by viewModel.post.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
+
+    // Obtenir le résultat de l'enregistrement du post
+    val postResult by viewModel.uiStatePostResult.collectAsStateWithLifecycle()
     
     CreatePost(
       modifier = Modifier.padding(contentPadding),
@@ -85,10 +92,9 @@ fun AddScreen(
       description = post.description ?: "",
       onDescriptionChanged = { viewModel.onAction(FormEvent.DescriptionChanged(it)) },
       onPhotoChanged = { viewModel.onAction(FormEvent.PhotoChanged(it)) },
-      onSaveClicked = {
-        viewModel.addPost()
-        onBackAfterSaveClick()
-      }
+      stateResultSave = postResult,
+      onSaveClicked = { viewModel.addPost() },
+      onBackAfterSaveClick = onBackAfterSaveClick
     )
   }
 }
@@ -100,13 +106,47 @@ private fun CreatePost(
   onTitleChanged: (String) -> Unit,
   description: String,
   onDescriptionChanged: (String) -> Unit,
-  onPhotoChanged : (Uri?) -> Unit,
+  onPhotoChanged: (Uri?) -> Unit,
   onSaveClicked: () -> Unit,
-  error: FormError?
+  error: FormError?,
+  stateResultSave: ResultCustom<String>?,
+  onBackAfterSaveClick: () -> Unit
 ) {
 
+  val context = LocalContext.current
 
   val scrollState = rememberScrollState()
+
+
+  // Gérer les différents états du résultat d'ajout d'un post
+  when (stateResultSave) {
+
+    is ResultCustom.Loading -> {
+      LoadingComposable() // N'arrivera pas
+    }
+
+    is ResultCustom.Success -> {
+      // Afficher un message de succès et fermer l'activity
+      Toast
+        .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
+        .show()
+
+      onBackAfterSaveClick()
+    }
+
+    is ResultCustom.Failure -> {
+      // Afficher un message d'erreur suite à l'envoi du Post
+      val errorMessage = stateResultSave.errorMessage ?: context.getString(R.string.unknowError)
+      Toast
+        .makeText(context, errorMessage, Toast.LENGTH_SHORT)
+        .show()
+    }
+
+    null -> {
+      // Ne rien afficher => pas d'ajout de post en cours'
+      //Log.d("test","test")
+    }
+  }
   
   Column(
     modifier = modifier
@@ -195,7 +235,9 @@ private fun CreatePost(
     }
     Button(
       enabled = (error == null),
-      onClick = { onSaveClicked() }
+      onClick = {
+        onSaveClicked()
+      }
     ) {
       Text(
         modifier = Modifier.padding(8.dp),
@@ -217,7 +259,9 @@ private fun CreatePostPreview() {
       onDescriptionChanged = { },
       onPhotoChanged = { },
       onSaveClicked = { },
-      error = null
+      error = null,
+      stateResultSave = null,
+      onBackAfterSaveClick = {}
     )
   }
 }
@@ -234,7 +278,9 @@ private fun CreatePostErrorPreview() {
       onDescriptionChanged = { },
       onPhotoChanged = { },
       onSaveClicked = { },
-      error = FormError.TitleError
+      error = FormError.TitleError,
+      stateResultSave = null,
+      onBackAfterSaveClick = {}
     )
   }
 }

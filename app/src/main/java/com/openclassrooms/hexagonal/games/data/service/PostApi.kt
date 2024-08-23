@@ -23,5 +23,6 @@ interface PostApi {
    *
    * @param post The Post object to be added.
    */
-  fun addPost(post: Post)
+  fun addPost(post: Post): Flow<ResultCustom<String>>
+
 }
