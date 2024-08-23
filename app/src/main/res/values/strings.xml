@@ -30,4 +30,8 @@
   <string name="needlogin">An account is mandatory in order to add a comment</string>
   <string name="default_notification_channel_id">Chanel ID</string>
   <string name="loading">Loading …</string>
+  <string name="error">Error</string>
+  <string name="retry">Retry</string>
+  <string name="close">Close</string>
+  <string name="unknown_error">Unknown error</string>
 </resources>

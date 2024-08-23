@@ -30,4 +30,9 @@
   <string name="needlogin">Un compte est nécessaire pour ajouter un commentaire</string>
   <string name="default_notification_channel_id">Chanel ID</string>
   <string name="loading">Chargement en cours …</string>
+  <string name="error">Erreur</string>
+  <string name="retry">Réessayer</string>
+  <string name="close">Fermer</string>
+  <string name="unknown_error">Erreur inconnue</string>
+
 </resources>

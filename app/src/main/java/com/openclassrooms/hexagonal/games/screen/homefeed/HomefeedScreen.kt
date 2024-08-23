@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.activity.ComponentActivity.RESULT_OK
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -225,6 +226,17 @@ fun HomefeedScreen(
       }
 
       is ResultCustom.Failure -> {
+
+        val activity = (context as Activity)
+
+        val error = result.errorMessage ?: stringResource(R.string.unknown_error)
+
+        ErrorComposable(
+          modifier=modifier,
+          sMessage = error,
+          onClickRetryP = { viewModel.loadPost() },
+          closeActivity = activity::finish
+        )
 
       }
 

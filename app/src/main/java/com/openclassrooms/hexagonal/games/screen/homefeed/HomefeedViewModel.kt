@@ -64,14 +64,10 @@ class HomefeedViewModel @Inject constructor(
       }
     }
   }
-/*
-  /**
-   * Return current user
-   */
-  fun getCurrentUser() : FirebaseUser? {
-    return userRepository.getCurrentUser()
+
+  fun loadPost() {
+    return postRepository.loadPost()
   }
-*/
 
   fun isCurrentUserLogged() : Boolean {
     return userRepository.isCurrentUserLogged()
