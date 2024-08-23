@@ -11,6 +11,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import com.google.firebase.storage.storage
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
+import kotlinx.coroutines.channels.ChannelResult
 
 
 class PostFireStoreAPI : PostApi {
@@ -34,7 +36,7 @@ class PostFireStoreAPI : PostApi {
 
     // TODO Denis 1 : Revue de getPostsOrderByCreationDateDesc
     // TODO JG : Scroll vers le haut => rappelle cette méthode
-    override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> { // TODO JG : Mettre un Flow de sealed class
+    override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> /*<ResultCustom<List<Post>>>*/ {
 
         val queryAllPosts = getAllPosts()
 
@@ -50,48 +52,23 @@ class PostFireStoreAPI : PostApi {
                     close(firebaseException) // Fermer le flux en cas d'erreur
                     return@addSnapshotListener
                 }
-/*
+
+                val result : ChannelResult<Unit>
+
                 if (snapshot != null && !snapshot.isEmpty) {
 
                     // Marche pas car il me faut un contructeur sans paramètre pour Post
                     // TODO JG : Faire un contructeur vide = mettre des paramètres par défaut
                     val posts = snapshot.toObjects(Post::class.java)
 
-                    trySend(posts).isSuccess // Émettre la liste des posts
+                    result = trySend(posts) // Émettre la liste des posts
+
                 } else {
-                    trySend(emptyList()).isSuccess // Émettre une liste vide si aucun post n'est trouvé
+
+                    result = trySend(emptyList()) // Émettre une liste vide si aucun post n'est trouvé
+
                 }
-*/
 
-                // Traiter les documents de la snapshot
-                val posts = snapshot?.documents?.mapNotNull { document ->
-                    try {
-                        val id = document.id
-                        val title = document.getString("title") ?: ""
-                        val desc = document.getString("description") ?: ""
-                        val photoURL = document.getString("photoUrl") ?: ""
-                        val timestamp = document.getLong("timestamp") ?: 0L
-
-                        val userAuthor: User? = document.get("author")?.let { authorMap ->     // let permet de travailler sur l'auteur que si la valeur est renseignée
-                            // TODO Denis : Warning sur la ligne ci-dessous
-                            val mapAuthor = authorMap as? Map<String, Any>                     // 3 éléments indicés par le nom de la rubrique
-                            mapAuthor?.let {
-                                val idUser = it["id"] as? String ?: ""
-                                val firstnameUser = it["firstname"] as? String ?: ""
-                                User(idUser, firstnameUser)
-                            }
-                        }
-
-                        Post(id, title, desc, photoURL, timestamp, userAuthor)
-
-                    } catch (ex: Exception) {
-                        // Gérer les erreurs de conversion ici
-                        null
-                    }
-                } ?: emptyList()
-
-                // Émettre la liste des posts (Equivalent de emit dans un callbackFlow)
-                val result = trySend(posts)
                 if (result.isFailure) {
                     close(result.exceptionOrNull())
                 }
