@@ -37,15 +37,24 @@ class UserRepository @Inject constructor() {
         return FirebaseAuth.getInstance().currentUser
     }
 
+    /**
+     * @return : True => The current user is logged, else False
+     */
     fun isCurrentUserLogged() : Boolean {
         return getCurrentUser()!=null
     }
 
+    /**
+     * Log out current user
+     */
     fun signOut(context : Context) : Task<Void> {
         return AuthUI.getInstance().signOut(context)
     }
 
-    fun deleteUser(context : Context) : Task<Void> {
+    /**
+     * Delete user of the application's user
+     */
+    fun deleteUser(context : Context) : Task<Void> { // Flow de String ou Sealed Class
 
         // Il faut supprimer l'utilisateur en base de données avant
         // (pour qu'il soit encore logué au moment de la suppression,
@@ -53,6 +62,10 @@ class UserRepository @Inject constructor() {
         deleteUserFromFirestore()
             ?.addOnSuccessListener {
                 Log.d("Debug : ","User supprimé de Firestore")
+//                AuthUI.getInstance().delete(context)
+//                    .addOnSuccessListener {
+//                        // Ajout dans un flow
+//                    }
             }
             ?.addOnFailureListener { exception ->
                 Log.d("Debug : ","Erreur : User non supprimé dans Firestore : ${exception.localizedMessage}")
@@ -61,16 +74,17 @@ class UserRepository @Inject constructor() {
         // Si la suppression de l'utilisateur Firestore est réussie,
         // on supprime également l'utilisateur de l'authentification
 
+        // TODO Denis : Voir comment je peux remonter l'erreur de Firestore dans la Task renvoyée
+        // Utiliser le addOnSuccessListener {
 
         return AuthUI.getInstance().delete(context)
-
-    // TODO Denis : Voir comment je peux remonter l'erreur de Firestore dans la Task renvoyée
-    // TODO Denis :  Voir aussi comment exécuter soit les 2 opérations, soit aucune.
 
 
     }
 
-    // Create User in Firestore
+    /**
+     * Create User in Firestore (database)
+     */
     fun insertCurrentUserInFirestore() {
 
         val user = getCurrentUser()
@@ -96,7 +110,9 @@ class UserRepository @Inject constructor() {
         }
     }
 
-    // Get User Data from Firestore
+    /**
+     * Get User Data from Firestore
+     */
     private fun getUserData(): Task<DocumentSnapshot>? {
 
         val uidCurrentUser : String? = this.getCurrentUserUID()
@@ -110,7 +126,9 @@ class UserRepository @Inject constructor() {
     }
 
 
-    // Delete the User from Firestore
+    /**
+     * Delete the current User from Firestore
+     */
     private fun deleteUserFromFirestore() : Task<Void>? {
 
         val uidAuthentication : String? = this.getCurrentUserUID()

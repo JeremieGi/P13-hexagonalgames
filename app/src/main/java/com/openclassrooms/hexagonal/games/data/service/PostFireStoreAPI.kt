@@ -33,8 +33,8 @@ class PostFireStoreAPI : PostApi {
     }
 
     // TODO Denis 1 : Revue de getPostsOrderByCreationDateDesc
-
-    override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> {
+    // TODO JG : Scroll vers le haut => rappelle cette méthode
+    override fun getPostsOrderByCreationDateDesc(): Flow<List<Post>> { // TODO JG : Mettre un Flow de sealed class
 
         val queryAllPosts = getAllPosts()
 
@@ -54,6 +54,7 @@ class PostFireStoreAPI : PostApi {
                 if (snapshot != null && !snapshot.isEmpty) {
 
                     // Marche pas car il me faut un contructeur sans paramètre pour Post
+                    // TODO JG : Faire un contructeur vide = mettre des paramètres par défaut
                     val posts = snapshot.toObjects(Post::class.java)
 
                     trySend(posts).isSuccess // Émettre la liste des posts

@@ -52,7 +52,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.Homefeed.route) {
       HomefeedScreen(
         onPostClick = {
-          //TODO JG
+          //TODO JG : Le clic sur un Post, ouvre le Post
         },
         onSettingsClick = {
           navHostController.navigate(Screen.Settings.route)
