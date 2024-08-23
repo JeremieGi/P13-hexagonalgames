@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,17 +23,11 @@ class UserInfoViewModel @Inject constructor(
         return userRepository.getCurrentUser()
     }
 
-/*
-    fun isCurrentUserLogged() : Boolean {
-        return userRepository.isCurrentUserLogged()
-    }
-*/
-
     fun signOut(context : Context) : Task<Void> {
         return userRepository.signOut(context)
     }
 
-    fun deleteUser(context : Context) : Task<Void> {
+    fun deleteUser(context : Context) : Flow<ResultCustom<String>> {
         return userRepository.deleteUser(context)
     }
 }

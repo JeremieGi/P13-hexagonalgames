@@ -3,10 +3,10 @@ package com.openclassrooms.hexagonal.games.data.service
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.User
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.toList
 
 /**
  * This class implements the PostApi interface and provides a fake in-memory data source for Posts.
@@ -71,8 +71,14 @@ class PostFakeApi : PostApi {
   override fun getPostsOrderByCreationDateDesc(): Flow<ResultCustom<List<Post>>> {
 
     return callbackFlow {
+
       val list : List<Post>  = posts.value
       trySend(ResultCustom.Success(list))
+
+      // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+      awaitClose {
+
+      }
     }
 
   }

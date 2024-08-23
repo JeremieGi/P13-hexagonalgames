@@ -34,5 +34,6 @@
   <string name="retry">Réessayer</string>
   <string name="close">Fermer</string>
   <string name="unknown_error">Erreur inconnue</string>
+  <string name="nologinuser">Aucun utilisateur n\'est identifié</string>
 
 </resources>

@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
+import com.openclassrooms.hexagonal.games.screen.homefeed.LoadingComposable
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 
@@ -43,6 +46,10 @@ fun UserInfoScreen(
     viewModel: UserInfoViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
+
+
+    val context = LocalContext.current
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -63,12 +70,22 @@ fun UserInfoScreen(
             )
         }
     ) { contentPadding ->
+
+
+        // Obtenir le résultat de la suppression de l'utilisateur
+        val deleteUserResult = produceState<ResultCustom<String>?>(initialValue = null, key1 = context) {
+            viewModel.deleteUser(context).collect { result ->
+                value = result
+            }
+        }
+
         UserInfo(
             modifier = Modifier.padding(contentPadding),
             userDisplayNameP = viewModel.getCurrentUser()?.displayName,
             userEmailP = viewModel.getCurrentUser()?.email,
             onClickSignOut = viewModel::signOut,
-            onClickDeleteUser = viewModel::deleteUser,
+            resultUiStateDeleteUser = deleteUserResult.value,
+            onClickDeleteUser = { viewModel.deleteUser(context) },
             onBackClick = onBackClick
         )
     }
@@ -78,11 +95,12 @@ fun UserInfoScreen(
 @Composable
 private fun UserInfo(
     modifier: Modifier = Modifier,
-    userDisplayNameP : String?,
-    userEmailP : String ?,
-    onClickSignOut : (Context) -> Task<Void>,
-    onClickDeleteUser : (Context) -> Task<Void>,
-    onBackClick: () -> Unit
+    userDisplayNameP: String?,
+    userEmailP: String?,
+    onClickSignOut: (Context) -> Task<Void>,
+    onClickDeleteUser: () -> Unit,
+    onBackClick: () -> Unit,
+    resultUiStateDeleteUser: ResultCustom<String>?
 ) {
 
     val context = LocalContext.current
@@ -90,7 +108,32 @@ private fun UserInfo(
     var sErrorSignOut by rememberSaveable { mutableStateOf("") }
     var sErrorDeleteAccount by rememberSaveable { mutableStateOf("") }
 
+    // Gérer les différents états du résultat de suppression de l'utilisateur
+    when (val result = resultUiStateDeleteUser) {
 
+        is ResultCustom.Loading -> {
+            LoadingComposable()
+        }
+
+        is ResultCustom.Success -> {
+            // Afficher un message de succès et fermer l'activity
+            Toast
+                .makeText(context, result.value, Toast.LENGTH_SHORT)
+                .show()
+
+            onBackClick()
+        }
+
+        is ResultCustom.Failure -> {
+            // Afficher un message d'erreur
+            val errorMessage =  result.errorMessage ?: context.getString(R.string.unknowError)
+            sErrorDeleteAccount = errorMessage
+        }
+
+        null -> {
+            // Ne rien afficher => pas de suppression en cours
+        }
+    }
 
     Column(
         modifier = modifier
@@ -148,41 +191,9 @@ private fun UserInfo(
         Button(onClick = {
 
             // Suppression du compte
+            onClickDeleteUser() // Le résultat est géré par callback
 
-            //AuthUI.getInstance()
-            onClickDeleteUser(context)
-                .addOnCompleteListener { task ->
 
-                    if (task.isSuccessful) {
-
-                        Toast
-                            .makeText(context, context.getString(R.string.deleteaccount_ok), Toast.LENGTH_SHORT)
-                            .show()
-
-                        onBackClick()
-
-                    }
-                    else{
-                        val errorMessage = task.exception?.localizedMessage ?: context.getString(R.string.unknowError)
-
-                        sErrorDeleteAccount = errorMessage
-
-                        Toast
-                            .makeText(context, errorMessage, Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    // TODO Denis : J'ai 2 façon de gérer l'exception (voir juste au dessus)
-
-                    val errorMessage = exception.localizedMessage ?: context.getString(R.string.unknowError)
-
-                    sErrorDeleteAccount = errorMessage
-
-                    Toast
-                        .makeText(context, errorMessage, Toast.LENGTH_SHORT)
-                        .show()
-                }
         }) {
             Text(stringResource(id = R.string.DeleteAccount))
         }
@@ -212,8 +223,9 @@ private fun UserInfoPreview() {
             userDisplayNameP = "Jérémie",
             userEmailP = "jeremie.neotic@free.fr",
             onClickSignOut = mock,
-            onClickDeleteUser = mock,
-            onBackClick = {}
+            onClickDeleteUser = {},
+            onBackClick = {},
+            resultUiStateDeleteUser = null
         )
     }
 

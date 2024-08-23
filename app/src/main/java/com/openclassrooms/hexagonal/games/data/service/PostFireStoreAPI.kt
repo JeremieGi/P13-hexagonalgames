@@ -6,7 +6,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.openclassrooms.hexagonal.games.domain.model.Post
-import com.openclassrooms.hexagonal.games.domain.model.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -39,8 +38,6 @@ class PostFireStoreAPI : PostApi {
 
         val queryAllPosts = getAllPosts()
 
-        // TODO JG : Test à faire : Si je mets le tél en mode avion ?
-
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
 
@@ -55,37 +52,41 @@ class PostFireStoreAPI : PostApi {
 
                     close(firebaseException) // Fermer le flux en cas d'erreur
 
-                    return@addSnapshotListener
+                    //return@addSnapshotListener // Permet de sortir du bloc .addSnapshotListener{
                 }
+                else{
 
-                val result : ChannelResult<Unit>
+                    val result : ChannelResult<Unit>
 
-                if (snapshot != null && !snapshot.isEmpty) {
+                    if (snapshot != null && !snapshot.isEmpty) {
 
-                    // Utiliser toObjects necessite un constructeur par défaut pour tous les objets associés (Post et User ici)
-                    // J'ai du ajouter des paramètres par défaut aux 2 data class
-                    val posts = snapshot.toObjects(Post::class.java)
+                        // Utiliser toObjects necessite un constructeur par défaut pour tous les objets associés (Post et User ici)
+                        // J'ai du ajouter des paramètres par défaut aux 2 data class
+                        val posts = snapshot.toObjects(Post::class.java)
 
-                    result = trySend(ResultCustom.Success(posts)) // Émettre la liste des posts
+                        result = trySend(ResultCustom.Success(posts)) // Émettre la liste des posts
 
-                } else {
+                    } else {
 
-                    result = trySend(ResultCustom.Success(emptyList())) // Émettre une liste vide si aucun post n'est trouvé
+                        result = trySend(ResultCustom.Success(emptyList())) // Émettre une liste vide si aucun post n'est trouvé
 
-                }
+                    }
 
-                if (result.isFailure) {
-                    trySend(ResultCustom.Failure(result.toString()))
-                    close(result.exceptionOrNull())
+                    if (result.isFailure) {
+                        trySend(ResultCustom.Failure(result.toString()))
+                        close(result.exceptionOrNull())
+                    }
+
                 }
 
             }
 
-            // TODO Denis : explication de awaitClose (Si je l'enlève l'appli plante) : java.lang.IllegalStateException: 'awaitClose { yourCallbackOrListener.cancel() }' should be used in the end of callbackFlow block.
-            // Cette fonction est appelée lorsque le Flow est annulé
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
             awaitClose {
-                listenerRegistration.remove() // Suppression du listener mais comment le remettre ensuite ?
+                listenerRegistration.remove()
             }
+
+
         }
 
     }
