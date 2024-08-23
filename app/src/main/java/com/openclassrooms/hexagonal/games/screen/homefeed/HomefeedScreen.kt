@@ -211,7 +211,7 @@ fun HomefeedScreen(
     when(val result = postsStateFlow){
 
       is ResultCustom.Loading -> {
-
+        LoadingComposable(modifier = modifier)
       }
 
       is ResultCustom.Success -> {

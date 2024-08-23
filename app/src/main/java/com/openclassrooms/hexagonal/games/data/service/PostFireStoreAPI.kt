@@ -44,6 +44,8 @@ class PostFireStoreAPI : PostApi {
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
 
+            trySend(ResultCustom.Loading)
+
             // addSnapshotListener : Ajoute un listener pour écouter les mises à jour en temps réel sur la requête. Chaque fois qu'il y a un changement dans Firestore, ce listener est appelé.
             val listenerRegistration = queryAllPosts.addSnapshotListener { snapshot, firebaseException ->
 
