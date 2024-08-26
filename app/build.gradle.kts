@@ -81,7 +81,7 @@ dependencies {
 
   // Import the Firebase BoM
   // garantit que toutes les bibliothèques Firebase utilisées dans un projet sont compatibles entre elles.
-  implementation(platform("com.google.firebase:firebase-bom:33.2.2"))
+  implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
 
   // When using the BoM, don't specify versions in Firebase dependencies
   implementation("com.google.firebase:firebase-analytics")

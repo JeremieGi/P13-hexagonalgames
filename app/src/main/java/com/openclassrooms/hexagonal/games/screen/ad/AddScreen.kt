@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.screen.ad
 
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -181,11 +182,18 @@ private fun CreatePost(
 
       var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-      // Callback du mediaPicker
+      // Callback du mediaPicker (Android 11 et supérieur
       val pickMediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         selectedImageUri = uri
         onPhotoChanged(selectedImageUri)
       }
+
+      // Callback du image launcher (Android 10 et inférieur)
+      val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        selectedImageUri = uri
+        onPhotoChanged(selectedImageUri)
+      }
+
 
 
       OutlinedTextField(
@@ -209,8 +217,13 @@ private fun CreatePost(
       Button(
         modifier = Modifier.padding(top = 16.dp),
         onClick = {
-          // Lancement du media picker (que les images)
-          pickMediaLauncher.launch(PickVisualMediaRequest(ImageOnly))
+
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // Android 11+
+            // Lancement du media picker (que les images)
+            pickMediaLauncher.launch(PickVisualMediaRequest(ImageOnly))
+          } else { // Versions inférieures
+            pickImageLauncher.launch("image/*")
+          }
         }
       ) {
         Text(
