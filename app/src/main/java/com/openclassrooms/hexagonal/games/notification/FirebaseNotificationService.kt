@@ -16,11 +16,29 @@ import com.openclassrooms.hexagonal.games.ui.MainActivity
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 
-    // TODO JG / Denis : Revoir ce code (Je reçois bien les notifs)
+
+    companion object {
+
+        // Nom de l'unique channel utilisé dans l'application
+        const val CHANNEL_ID_HEXAGONAL : String = "hexagonal_channel_id"
+
+        // Création du channel
+        fun createChannel(notificationManager: NotificationManager) {
+
+            val channelName: CharSequence = "Firebase Messages"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val mChannel = NotificationChannel(CHANNEL_ID_HEXAGONAL, channelName, importance)
+            notificationManager.createNotificationChannel(mChannel)
+
+        }
+    }
 
     private val NOTIFICATION_ID = 7
     private val NOTIFICATION_TAG = "HEXAGONAL"
 
+    /**
+     * Méthode appelé à la réception d'une notification
+     */
     override fun onMessageReceived(message: RemoteMessage) {
 
         super.onMessageReceived(message)
@@ -37,21 +55,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     }
 
+    /**
+     * Permet l'affichage à l'écran de la notification
+     */
     private fun sendVisualNotification(notification: RemoteMessage.Notification?) {
 
         // Create an Intent that will be shown when user will click on the Notification
         val intent = Intent(this, MainActivity::class.java )
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        // FLAG_ONE_SHOT
-
-        // Create a Channel (Android 8)
-        val channelId = "default_notification_channel_id"
 
         // Build a Notification object
         val notificationBuilder: NotificationCompat.Builder =
-            NotificationCompat.Builder(this, channelId)
+            NotificationCompat.Builder(this, CHANNEL_ID_HEXAGONAL)
                 .setSmallIcon(com.openclassrooms.hexagonal.games.R.drawable.ic_notifications)
                 .setContentTitle(notification!!.title)
                 .setContentText(notification.body)
@@ -63,13 +79,22 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
         // Support Version >= Android 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName: CharSequence = "Firebase Messages"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val mChannel = NotificationChannel(channelId, channelName, importance)
-            notificationManager.createNotificationChannel(mChannel)
+
+            // Si le canal n'existe pas
+            val existingChannel = notificationManager.getNotificationChannel(CHANNEL_ID_HEXAGONAL)
+            if (existingChannel == null) {
+                // Il est créé
+                createChannel(notificationManager)
+            }
+            // Si le canal existe déjà, on le touche pas (l'importance peut être paramétrée depuis l'application pour activer les notifs ou pas)
+
+        }
+        else{
+            // J'ai mis dans gradle, Oreo 'Android 8' en version minimale
         }
 
         // Show notification
+        // La notification ne s'affiche pas si l'importance du channel est IMPORTANCE_NONE
         notificationManager.notify(
             NOTIFICATION_TAG,
             NOTIFICATION_ID,

@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
@@ -28,21 +30,33 @@ import com.openclassrooms.hexagonal.games.screen.homefeed.LoadingComposable
 @Composable
 fun PostDetailScreen(
     modifier: Modifier = Modifier,
+    postId : String?,
     viewModel: PostDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
 
+    if (postId.isNullOrEmpty()){
+        ErrorComposable(
+            sMessage = "Aucun ID de post passé en paramètre",
+            onClickRetryP = {}) {
+        }
+    }
+    else{
 
-    // Lecture du post
-    val uiStatePost by viewModel.uiStatePostResult.collectAsStateWithLifecycle(
-        initialValue = ResultCustom.Loading
-    )
+        // Lecture du post
+        val uiStatePost by viewModel.uiStatePostResult.collectAsStateWithLifecycle(
+            initialValue = ResultCustom.Loading
+        )
 
-    PostDetailScreenScaffold(
-        modifier = modifier,
-        uiStatePost = uiStatePost,
-        onBackClick = onBackClick
-    )
+        PostDetailScreenScaffold(
+            modifier = modifier,
+            uiStatePost = uiStatePost,
+            onBackClick = onBackClick
+        )
+
+    }
+
+
 
 
 }

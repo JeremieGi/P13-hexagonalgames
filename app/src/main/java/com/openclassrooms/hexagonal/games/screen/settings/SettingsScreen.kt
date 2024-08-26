@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.screen.settings
 
 
+import android.app.Application
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.openclassrooms.hexagonal.games.R
+import com.openclassrooms.hexagonal.games.notification.FirebaseNotificationService
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,14 +67,18 @@ fun SettingsScreen(
     }
   ) { contentPadding ->
 
-    //val context = LocalContext.current
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
 
     Settings(
       modifier = Modifier.padding(contentPadding),
-      //bNotificationEnableP = viewModel.notificationsAreEnable(context),
-      onNotificationDisabledClicked = { viewModel.disableNotifications() },
+      bNotificationEnableP = viewModel.bChannelEnable(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL),
+      bNotificationEnableInAndroidSettingsP = viewModel.notificationsAreEnable(context),
+      onNotificationDisabledClicked = {
+        viewModel.disableNotifications(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
+      },
       onNotificationEnabledClicked = {
-        viewModel.enableNotifications()
+        viewModel.enableNotifications(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
       }
     )
   }
@@ -80,10 +90,9 @@ private fun Settings(
   modifier: Modifier = Modifier,
   onNotificationEnabledClicked: () -> Unit,
   onNotificationDisabledClicked: () -> Unit,
-  //bNotificationEnableP : Boolean
+  bNotificationEnableInAndroidSettingsP : Boolean,
+  bNotificationEnableP : Boolean
 ) {
-
-
 
   val notificationsPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     rememberPermissionState(
@@ -93,7 +102,7 @@ private fun Settings(
     null
   }
 
-  //var bEnable by remember { mutableStateOf(bNotificationEnableP) }
+  var bEnable by remember { mutableStateOf(bNotificationEnableP) }
   
   Column(
     modifier = modifier.fillMaxSize(),
@@ -107,12 +116,19 @@ private fun Settings(
       contentDescription = stringResource(id = R.string.contentDescription_notification_icon)
     )
 
-//    if (bEnable){
-//      Text("Notification activée")
-//    }
-//    else{
-//      Text("Notification désactivée")
-//    }
+    if (bNotificationEnableInAndroidSettingsP){
+      Text("Notification activée dans les paramètres Android")
+    }
+    else{
+      Text("Notification désactivée dans les paramètres Android. A activer manuellement.")
+    }
+
+    if (bEnable){
+      Text("Notification activée dans le channel")
+    }
+    else{
+      Text("Notification désactivée dans le channel")
+    }
 
     Button(
       onClick = {
@@ -124,7 +140,7 @@ private fun Settings(
         
         onNotificationEnabledClicked()
 
-        //bEnable = true
+        bEnable = true
       }
     ) {
       Text(text = stringResource(id = R.string.notification_enable))
@@ -132,7 +148,7 @@ private fun Settings(
     Button(
       onClick = {
         onNotificationDisabledClicked()
-        //bEnable = false
+        bEnable = false
       }
     ) {
       Text(text = stringResource(id = R.string.notification_disable))
@@ -148,7 +164,8 @@ private fun SettingsPreview() {
     Settings(
       onNotificationEnabledClicked = { },
       onNotificationDisabledClicked = { },
-      //bNotificationEnableP = true
+      bNotificationEnableP = true,
+      bNotificationEnableInAndroidSettingsP = true,
     )
   }
 }

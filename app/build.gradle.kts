@@ -13,7 +13,7 @@ android {
 
   defaultConfig {
     applicationId = "com.openclassrooms.hexagonal.games"
-    minSdk = 24
+    minSdk = 26 // Min Android 8 pour gérer les channels des notifications
     targetSdk = 34
     versionCode = 1
     versionName = "1.0"

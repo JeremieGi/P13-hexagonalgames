@@ -14,5 +14,8 @@ sealed class Screen(
 
   data object UserInfo : Screen("userInfo")
 
-  data object PostDetail : Screen("postDetail")
+  data object PostDetail : Screen("postDetail/{postId}"){
+    // Configurer la Route avec des Arguments
+    fun createRoute(postId: String) = "postDetail/$postId"
+  }
 }

@@ -52,8 +52,9 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
   ) {
     composable(route = Screen.Homefeed.route) {
       HomefeedScreen(
-        onPostClick = {
-          //TODO JG : Le clic sur un Post, ouvre le Post
+        onPostClick = { post ->
+          //Le clic sur un Post, ouvre le Post
+          navHostController.navigate(Screen.PostDetail.createRoute(post.id))
         },
         onSettingsClick = {
           navHostController.navigate(Screen.Settings.route)
@@ -84,8 +85,13 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     }
 
     // TODO JG => Passer un argument
-    composable(route = Screen.PostDetail.route) {
+    composable(route = Screen.PostDetail.route) { backStackEntry ->
+
+      // Extraire le postId de l'entrée de la pile
+      val postId = backStackEntry.arguments?.getString("postId")
+
       PostDetailScreen(
+        postId = postId,
         onBackClick = { navHostController.navigateUp() }
       )
     }
