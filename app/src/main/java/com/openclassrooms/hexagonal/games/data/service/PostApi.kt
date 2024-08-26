@@ -25,4 +25,10 @@ interface PostApi {
    */
   fun addPost(post: Post): Flow<ResultCustom<String>>
 
+  /**
+   * Load a post
+   */
+  fun loadPostByID(idPost: String): Flow<ResultCustom<Post>>
+
+
 }

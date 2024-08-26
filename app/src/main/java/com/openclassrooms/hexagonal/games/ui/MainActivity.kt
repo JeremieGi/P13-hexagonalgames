@@ -92,7 +92,8 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
 
       PostDetailScreen(
         postId = postId,
-        onBackClick = { navHostController.navigateUp() }
+        onBackClick = { navHostController.navigateUp() },
+        onAddComment = { /*TODO JG*/ }
       )
     }
 

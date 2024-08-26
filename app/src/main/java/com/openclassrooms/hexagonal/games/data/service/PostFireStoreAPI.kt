@@ -6,6 +6,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,11 @@ class PostFireStoreAPI : PostApi {
     private fun getAllPosts(): Query {
         return this.getPostCollection()
             .orderBy("timestamp", Query.Direction.DESCENDING)
+    }
+
+    private fun getPostByID(postId: String): Query {
+        return this.getPostCollection()
+            .whereEqualTo("id", postId)
     }
 
 
@@ -126,7 +132,7 @@ class PostFireStoreAPI : PostApi {
                             trySend(ResultCustom.Failure("Upload failed: ${exception.message}"))
 
                         }
-                        .addOnSuccessListener { taskSnapshot ->
+                        .addOnSuccessListener {
 
                             // Récupérer l'URL de téléchargement de l'image
                             storageRefImage.downloadUrl
@@ -209,6 +215,43 @@ class PostFireStoreAPI : PostApi {
         }
 
 
+    }
+
+
+    override fun loadPostByID(idPost: String): Flow<ResultCustom<Post>> {
+
+        val queryPost = getPostByID(idPost)
+
+        // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
+        return callbackFlow {
+
+            queryPost.get()
+                .addOnSuccessListener { querySnapshot: QuerySnapshot ->
+
+                    if (!querySnapshot.isEmpty) {
+                        // Récupérer le premier document (puisque ID est unique)
+                        val documentSnapshot = querySnapshot.documents[0]
+                        val post = documentSnapshot.toObject(Post::class.java)
+                        if (post==null){
+                            trySend(ResultCustom.Failure("Echec du toObject"))
+                        }
+                        else{
+                            trySend(ResultCustom.Success(post))
+                        }
+
+                    } else {
+                        trySend(ResultCustom.Failure("Aucun document trouvé"))
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    trySend(ResultCustom.Failure(exception.message))
+                }
+
+            // awaitClose : Suspend la coroutine actuelle jusqu'à ce que le canal soit fermé ou annulé et appelle le bloc donné avant de reprendre la coroutine.
+            awaitClose {
+
+            }
+        }
     }
 
 

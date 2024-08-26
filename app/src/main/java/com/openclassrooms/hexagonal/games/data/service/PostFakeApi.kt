@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
  * It's intended for testing purposes and simulates a real API.
  */
 class PostFakeApi : PostApi {
+
   private val users = mutableListOf(
     User("1", "Gerry"),
     User("2", "Brenton"),
@@ -98,7 +99,28 @@ class PostFakeApi : PostApi {
 
     }
 
-
   }
-  
+
+
+  override fun loadPostByID(idPost: String): Flow<ResultCustom<Post>> {
+
+    return callbackFlow {
+
+      val postFind = posts.value.filter {
+        it.id == idPost
+      }
+
+      when (postFind.size){
+        0 -> trySend(ResultCustom.Failure("No post find with ID = ${idPost}"))
+        1 -> trySend(ResultCustom.Success(postFind[0]))
+        else -> trySend(ResultCustom.Failure("${postFind.size} posts find with ID = ${idPost}"))
+      }
+
+      // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+      awaitClose {
+
+      }
+    }
+  }
+
 }

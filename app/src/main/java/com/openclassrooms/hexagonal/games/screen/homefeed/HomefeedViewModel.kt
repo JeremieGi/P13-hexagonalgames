@@ -66,7 +66,7 @@ class HomefeedViewModel @Inject constructor(
   }
 
   fun loadPost() {
-    return postRepository.loadPost()
+    return postRepository.loadAllPosts()
   }
 
   fun isCurrentUserLogged() : Boolean {

@@ -39,8 +39,14 @@ class PostRepository @Inject constructor(
 
   }
 
-  fun loadPost() {
+  fun loadAllPosts() {
       _flowPost = postApi.getPostsOrderByCreationDateDesc()
+  }
+
+  fun loadPostByID(idPost : String) : Flow<ResultCustom<Post>> {
+
+    return postApi.loadPostByID(idPost)
+
   }
   
 }

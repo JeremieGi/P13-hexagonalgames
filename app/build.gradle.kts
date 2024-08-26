@@ -74,12 +74,14 @@ dependencies {
   androidTestImplementation(libs.ext.junit)
   androidTestImplementation(libs.espresso.core)
 
+  // Coil = affichage d'URL dans un champ Image (comme Glide)
+  implementation("io.coil-kt:coil-compose:2.7.0")
 
   // Firebase
 
   // Import the Firebase BoM
   // garantit que toutes les bibliothèques Firebase utilisées dans un projet sont compatibles entre elles.
-  implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+  implementation(platform("com.google.firebase:firebase-bom:33.2.2"))
 
   // When using the BoM, don't specify versions in Firebase dependencies
   implementation("com.google.firebase:firebase-analytics")
