@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.data.service
 
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import com.openclassrooms.hexagonal.games.domain.model.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -101,19 +102,24 @@ class PostFakeApi : PostApi {
 
   }
 
+  private fun _loadByID(idPost: String) : Post? {
+
+    return posts.value.find { it.id == idPost }
+
+  }
+
 
   override fun loadPostByID(idPost: String): Flow<ResultCustom<Post>> {
 
+    val post = _loadByID(idPost)
+
     return callbackFlow {
 
-      val postFind = posts.value.filter {
-        it.id == idPost
+      if (post==null){
+        trySend(ResultCustom.Failure("No post find with ID = ${idPost}"))
       }
-
-      when (postFind.size){
-        0 -> trySend(ResultCustom.Failure("No post find with ID = ${idPost}"))
-        1 -> trySend(ResultCustom.Success(postFind[0]))
-        else -> trySend(ResultCustom.Failure("${postFind.size} posts find with ID = ${idPost}"))
+      else{
+        trySend(ResultCustom.Success(post))
       }
 
       // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
@@ -121,6 +127,22 @@ class PostFakeApi : PostApi {
 
       }
     }
+  }
+
+  override fun addCommentInPost(postId: String, comment: PostComment): Flow<ResultCustom<String>> {
+
+    val post = _loadByID(postId)
+
+    return callbackFlow {
+
+      if (post!=null){
+        trySend(ResultCustom.Success(""))
+      }
+      else{
+        trySend(ResultCustom.Failure("No post find with ID = ${postId}"))
+      }
+    }
+
   }
 
 }

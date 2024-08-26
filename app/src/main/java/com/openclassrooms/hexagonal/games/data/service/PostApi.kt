@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.data.service
 
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -30,5 +31,13 @@ interface PostApi {
    */
   fun loadPostByID(idPost: String): Flow<ResultCustom<Post>>
 
+
+  /**
+   * Adds a new comment in a Post to the data source.
+   *
+   * @param postId : ID post
+   * @param comment : comment to add
+   */
+  fun addCommentInPost(postId: String, comment: PostComment): Flow<ResultCustom<String>>
 
 }

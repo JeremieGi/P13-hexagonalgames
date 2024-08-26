@@ -9,6 +9,7 @@ import com.openclassrooms.hexagonal.games.domain.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,15 +26,20 @@ class HomefeedViewModel @Inject constructor(
   ViewModel() {
   
   private val _postsStateFlow : MutableStateFlow<ResultCustom<List<Post>>> = MutableStateFlow(ResultCustom.Loading)
-  
+  val postsStateFlow: StateFlow<ResultCustom<List<Post>>> = _postsStateFlow.asStateFlow() // Accès en lecture seule de l'extérieur
+
   /**
    * Returns a Flow observable containing the list of posts fetched from the repository.
    *
    * @return A Flow<List<Post>> object that can be observed for changes.
    */
-  val postsStateFlow: StateFlow<ResultCustom<List<Post>>>
-    get() = _postsStateFlow
-  
+  //val postsStateFlow: StateFlow<ResultCustom<List<Post>>>
+  //  get() = _postsStateFlow
+
+  //private val _uiStateUserDeleteResult = MutableStateFlow<ResultCustom<String>?>(null)
+
+
+
   init {
     viewModelScope.launch {
 

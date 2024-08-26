@@ -18,4 +18,9 @@ sealed class Screen(
     // Configurer la Route avec des Arguments
     fun createRoute(postId: String) = "postDetail/$postId"
   }
+
+  data object AddCommentToPost : Screen("addCommentToPost/{postId}"){
+    // Configurer la Route avec des Arguments
+    fun createRoute(postId: String) = "addCommentToPost/$postId"
+  }
 }

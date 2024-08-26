@@ -14,6 +14,7 @@ import com.openclassrooms.hexagonal.games.screen.homefeed.HomefeedScreen
 import com.openclassrooms.hexagonal.games.screen.postdetails.PostDetailScreen
 import com.openclassrooms.hexagonal.games.screen.settings.SettingsScreen
 import com.openclassrooms.hexagonal.games.screen.userinfoscreen.UserInfoScreen
+import com.openclassrooms.hexagonal.games.screen.addComment.AddCommentScreen
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -69,8 +70,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     }
     composable(route = Screen.AddPost.route) {
       AddScreen(
-        onBackClick = { navHostController.navigateUp() },
-        onBackAfterSaveClick = { navHostController.navigateUp() }
+        onBackClick = { navHostController.navigateUp() }
       )
     }
     composable(route = Screen.Settings.route) {
@@ -84,7 +84,6 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
       )
     }
 
-    // TODO JG => Passer un argument
     composable(route = Screen.PostDetail.route) { backStackEntry ->
 
       // Extraire le postId de l'entrée de la pile
@@ -93,8 +92,23 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
       PostDetailScreen(
         postId = postId,
         onBackClick = { navHostController.navigateUp() },
-        onAddComment = { /*TODO JG*/ }
+        onFABAddCommentClick = { idPost ->
+          // L'ID du post est transféré
+          navHostController.navigate(Screen.AddCommentToPost.createRoute(idPost))
+        }
       )
+    }
+
+    composable(route = Screen.AddCommentToPost.route) { backStackEntry ->
+
+      // Extraire le postId de l'entrée de la pile
+      val postId = backStackEntry.arguments?.getString("postId")
+
+      AddCommentScreen(
+        postId = postId,
+        onBackClick = { navHostController.navigateUp() },
+      )
+
     }
 
   }

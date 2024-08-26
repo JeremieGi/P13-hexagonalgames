@@ -5,6 +5,7 @@
   <string name="SignOut">Sign out</string>
   <string name="DeleteAccount">Delete account</string>
   <string name="add_fragment_label">Add a post</string>
+  <string name="add_comment">Add a comment</string>
   <string name="homefeed_fragment_label">Home</string>
   <string name="by">By %1$s</string>
   <string name="notification_enable">Enable notifications</string>
@@ -36,4 +37,6 @@
   <string name="unknown_error">Unknown error</string>
   <string name="nologinuser">No user login</string>
     <string name="post_envoy">Post envoyé</string>
+  <string name="Comment">Comment</string>
+  <string name="CommentEmpty">Comment not valid</string>
 </resources>

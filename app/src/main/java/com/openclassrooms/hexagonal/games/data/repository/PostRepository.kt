@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.data.repository
 
 import com.openclassrooms.hexagonal.games.data.service.PostApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,9 +45,11 @@ class PostRepository @Inject constructor(
   }
 
   fun loadPostByID(idPost : String) : Flow<ResultCustom<Post>> {
-
     return postApi.loadPostByID(idPost)
+  }
 
+  fun addCommentInPost(postId: String, comment: PostComment): Flow<ResultCustom<String>> {
+    return postApi.addCommentInPost(postId,comment)
   }
   
 }

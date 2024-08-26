@@ -46,9 +46,8 @@ class AddViewModel @Inject constructor(
    * Public state flow representing the current post being edited.
    * This is immutable for consumers.
    */
-  val post: StateFlow<Post>
+  val post : StateFlow<Post>
     get() = _post
-
 
   // UI state - Résultat du post
   private val _uiStatePostResult = MutableStateFlow<ResultCustom<String>?>(null)

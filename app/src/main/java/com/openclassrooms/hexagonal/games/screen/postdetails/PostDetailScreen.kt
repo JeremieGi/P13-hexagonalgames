@@ -1,14 +1,20 @@
 package com.openclassrooms.hexagonal.games.screen.postdetails
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +49,7 @@ fun PostDetailScreen(
     postId : String?,
     viewModel: PostDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onAddComment : () -> Unit
+    onFABAddCommentClick : (idPost : String) -> Unit
 ) {
 
 
@@ -68,7 +74,10 @@ fun PostDetailScreen(
 
         PostDetailScreenScaffold(
             modifier = modifier,
+            postId = postId,
+            bUserConnectedP = viewModel.isCurrentUserLogged(),
             uiStatePost = uiStatePost,
+            onFABAddCommentClick = onFABAddCommentClick,
             onBackClick = onBackClick
         )
 
@@ -83,7 +92,10 @@ fun PostDetailScreen(
 @Composable
 fun PostDetailScreenScaffold(
     modifier: Modifier = Modifier,
+    postId : String,
+    bUserConnectedP : Boolean,
     uiStatePost: ResultCustom<Post>,
+    onFABAddCommentClick : (idPost : String) -> Unit,
     onBackClick: () -> Unit,
 ){
 
@@ -123,6 +135,29 @@ fun PostDetailScreenScaffold(
                     }
                 }
             )
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+
+                    if (bUserConnectedP){
+                        onFABAddCommentClick(postId)
+                    }
+                    else{
+                        Toast
+                            .makeText(context, context.getString(R.string.needlogin), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(id = R.string.description_button_add)
+                )
+            }
         }
     ) { contentPadding ->
 
@@ -137,8 +172,7 @@ fun PostDetailScreenScaffold(
 
                 DetailPost(
                     modifier = Modifier.padding(contentPadding),
-                    postP = uiStatePost.value,
-                    onAddCommentClicked = { /*TODO JG*/ }
+                    postP = uiStatePost.value
                 )
 
             }
@@ -167,8 +201,7 @@ fun PostDetailScreenScaffold(
 @Composable
 fun DetailPost(
     modifier: Modifier = Modifier,
-    postP: Post,
-    onAddCommentClicked: () -> Unit) {
+    postP: Post) {
 
     Column(
         modifier = modifier
@@ -176,52 +209,57 @@ fun DetailPost(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-        ) {
-
-            Text(
-                text = stringResource(
-                    id = R.string.by,
-                    postP.author?.firstname ?: ""
-                ),
-                style = MaterialTheme.typography.titleSmall
-            )
-
-
-            Text(
+        ElevatedCard(
+            modifier = Modifier.wrapContentSize(),
+        ){
+            Column(
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
-                text = postP.title
-            )
+                    //.fillMaxSize()
+                    //.weight(1f)
+            ) {
 
-            if (postP.description != null) {
+                Text(
+                    text = stringResource(
+                        id = R.string.by,
+                        postP.author?.firstname ?: ""
+                    ),
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+
                 Text(
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .fillMaxWidth(),
-                    text = postP.description
-                )
-            }
-
-            if (postP.photoUrl != null){
-
-                //  l'image est chargée et affichée à l'aide de Coil, une bibliothèque populaire pour le chargement d'images dans Compose.
-                SubcomposeAsyncImage(
-                    model = postP.photoUrl,
-                    loading = {
-                        CircularProgressIndicator()
-                    },
-                    contentDescription = null
+                    text = postP.title
                 )
 
+                if (postP.description != null) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth(),
+                        text = postP.description
+                    )
+                }
+
+                if (postP.photoUrl != null){
+
+                    //  l'image est chargée et affichée à l'aide de Coil, une bibliothèque populaire pour le chargement d'images dans Compose.
+                    SubcomposeAsyncImage(
+                        model = postP.photoUrl,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        contentDescription = null
+                    )
+
+                }
+
+
             }
-
-
         }
+
 
     }
 
@@ -250,8 +288,11 @@ private fun PostDetailScreenScaffoldPreview() {
         val uiStatePost = ResultCustom.Success(post)
 
         PostDetailScreenScaffold(
+            postId = post.id,
             uiStatePost = uiStatePost,
-            onBackClick = {}
+            bUserConnectedP = true,
+            onFABAddCommentClick = {},
+            onBackClick = {},
         )
     }
 }
@@ -266,7 +307,10 @@ private fun PostDetailScreenScaffoldLoadingPreview() {
         val uiStatePost = ResultCustom.Loading
 
         PostDetailScreenScaffold(
+            postId = "",
             uiStatePost = uiStatePost,
+            bUserConnectedP = true,
+            onFABAddCommentClick = {},
             onBackClick = {}
         )
     }

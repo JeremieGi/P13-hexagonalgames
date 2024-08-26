@@ -6,6 +6,7 @@
   <string name="DeleteAccount">Suppression du compte</string>
   <string name="homefeed_fragment_label">Home</string>
   <string name="add_fragment_label">Ajout d\'une publication</string>
+  <string name="add_comment">Ajout d\'un commentaire</string>
   <string name="by">Par %1$s</string>
   <string name="notification_enable">Activer les notifications</string>
   <string name="notification_disable">Désactiver les notifications</string>
@@ -36,5 +37,7 @@
   <string name="unknown_error">Erreur inconnue</string>
   <string name="nologinuser">Aucun utilisateur n\'est identifié</string>
     <string name="post_envoy">Post envoyé</string>
+  <string name="Comment">Commentaire</string>
+  <string name="CommentEmpty">Commentaire non valide</string>
 
 </resources>

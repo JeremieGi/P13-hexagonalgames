@@ -2,8 +2,10 @@ package com.openclassrooms.hexagonal.games.data.service
 
 
 import android.net.Uri
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import com.google.firebase.storage.storage
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
+import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import kotlinx.coroutines.channels.ChannelResult
 
 
@@ -20,6 +23,7 @@ class PostFireStoreAPI : PostApi {
 
     companion object {
         private const val COLLECTION_POSTS : String = "posts"
+        private const val COLLECTION_COMMENTS : String = "comments"
     }
 
     // Variable globale de Firebase Storage (pour stocker les images)
@@ -38,6 +42,14 @@ class PostFireStoreAPI : PostApi {
     private fun getPostByID(postId: String): Query {
         return this.getPostCollection()
             .whereEqualTo("id", postId)
+    }
+
+    private fun addComment(postId: String, comment: PostComment) : Task<Void> {
+
+        // Référence sur le Post
+        val postRef = this.getPostCollection().document(postId)
+        return postRef.update(COLLECTION_COMMENTS, FieldValue.arrayUnion(comment))
+
     }
 
 
@@ -109,6 +121,9 @@ class PostFireStoreAPI : PostApi {
 
             try {
 
+                // Utilisation de l'ID du post pour créer une référence de document
+                val postDocument = getPostCollection().document(post.id)
+
                 // On rentre ici, que si un collector est présent sur le Flow
 
                 // Si une photo est présente, il faut l'uploader
@@ -142,7 +157,8 @@ class PostFireStoreAPI : PostApi {
                                     val updatedPost = post.copy(photoUrl = uri.toString())
 
                                     // Ajouter le post dans Firestore
-                                    getPostCollection().add(updatedPost)
+                                    //getPostCollection().add(updatedPost)
+                                    postDocument.set(updatedPost)
                                         .addOnSuccessListener {
                                             // Succès de l'ajout dans Firestore
                                             trySend(ResultCustom.Success("Post OK"))
@@ -175,9 +191,9 @@ class PostFireStoreAPI : PostApi {
                         .addOnPausedListener {
                             trySend(ResultCustom.Failure("addOnPausedListener"))
                         }
-                        .addOnProgressListener {
-                            trySend(ResultCustom.Failure("addOnProgressListener"))
-                        }
+//                        .addOnProgressListener {
+//                            // Appelle en attendant le résultat
+//                        }
 
 
                 }
@@ -185,7 +201,8 @@ class PostFireStoreAPI : PostApi {
                     // Aucune photo
 
                     // Si aucune photo n'est présente, ajouter directement le post dans Firestore
-                    getPostCollection().add(post)
+                    //getPostCollection().add(post)
+                    postDocument.set(post)
                         .addOnSuccessListener {
                             // Succès de l'ajout dans Firestore
                             trySend(ResultCustom.Success("Post OK")) // TODO Denis : Si je veux utiliser les ressources String ici, je suis obligé de passer le context en paramètre ?
@@ -252,6 +269,32 @@ class PostFireStoreAPI : PostApi {
 
             }
         }
+    }
+
+    override fun addCommentInPost(
+        postId: String,
+        comment: PostComment
+    ): Flow<ResultCustom<String>> {
+
+        val task = this.addComment(postId,comment)
+
+        return callbackFlow {
+
+            task
+                .addOnSuccessListener {
+                    trySend(ResultCustom.Success(""))
+                }
+                .addOnFailureListener { exception ->
+                    trySend(ResultCustom.Failure(exception.message))
+                }
+
+            awaitClose {
+
+            }
+
+        }
+
+
     }
 
 
