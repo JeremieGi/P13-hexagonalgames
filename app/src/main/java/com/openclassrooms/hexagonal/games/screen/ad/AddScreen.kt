@@ -83,7 +83,9 @@ fun AddScreen(
 
     // Obtenir le résultat de l'enregistrement du post
     val postResult by viewModel.uiStatePostResult.collectAsStateWithLifecycle()
-    
+
+
+
     CreatePost(
       modifier = Modifier.padding(contentPadding),
       error = error,

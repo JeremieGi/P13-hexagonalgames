@@ -49,4 +49,9 @@ data class Post(
 
 ) : Serializable {
 
+  // Accesseur pour obtenir la liste des commentaires triés par timestamp décroissant
+  fun listCommentsRecentsFirst() : List<PostComment> {
+    return listComments.sortedByDescending { it.timestamp }
+  }
+
 }

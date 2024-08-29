@@ -25,7 +25,9 @@ class PostFireStoreAPI : PostApi {
 
         private const val COLLECTION_POSTS : String = "posts"
 
+
         // La valeur "listComments" = au membre de la classe Post ce qui permet l'utilisation de toobject pour charger les données Firebase dans mes classes Model
+        // TODO Denis : Risqué pour la maintenance : Je me demande si il ne faudrait pas faire une calsse DTo comme avec Room
         private const val COLLECTION_COMMENTS : String = "listComments"
     }
 
@@ -262,8 +264,6 @@ class PostFireStoreAPI : PostApi {
                         val timestamp = documentSnapshot.getLong("timestamp") ?: 0L
 */
 
-
-
                         if (post==null){
                             trySend(ResultCustom.Failure("Echec du toObject"))
                         }
@@ -297,7 +297,7 @@ class PostFireStoreAPI : PostApi {
 
             task
                 .addOnSuccessListener {
-                    trySend(ResultCustom.Success(""))
+                    trySend(ResultCustom.Success("Commentaire ajouté"))
                 }
                 .addOnFailureListener { exception ->
                     trySend(ResultCustom.Failure(exception.message))

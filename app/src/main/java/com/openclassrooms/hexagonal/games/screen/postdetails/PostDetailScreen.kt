@@ -287,7 +287,7 @@ fun DetailPost(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                items(postP.listComments) { comment ->
+                items(postP.listCommentsRecentsFirst()) { comment ->
                     CommentCell(
                         commentP = comment
                     )

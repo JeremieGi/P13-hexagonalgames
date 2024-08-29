@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.screen.addComment
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,6 +84,10 @@ fun AddCommentScreen(
             // Obtenir le résultat de l'enregistrement du commentaire
             val postResult by viewModel.uiStatePostCommentResult.collectAsStateWithLifecycle()
 
+            Log.d("Debug","CreateComment : postResult = {${postResult}}")
+            Log.d("Debug","CreateComment : currentComment = {${currentComment.comment}}")
+            Log.d("Debug","CreateComment : error = {${error.toString()}}")
+
             CreateComment(
                 modifier = Modifier.padding(contentPadding),
                 error = error,
@@ -129,6 +134,9 @@ private fun CreateComment(
             Toast
                 .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
                 .show()
+
+            // TODO : Code exécuté 2 fois à la validation d'un commentaire
+            Log.d("Debug","onBackAfterSaveClick")
 
             onBackAfterSaveClick()
         }
