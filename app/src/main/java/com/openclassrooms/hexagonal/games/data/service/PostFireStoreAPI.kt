@@ -22,8 +22,11 @@ import kotlinx.coroutines.channels.ChannelResult
 class PostFireStoreAPI : PostApi {
 
     companion object {
+
         private const val COLLECTION_POSTS : String = "posts"
-        private const val COLLECTION_COMMENTS : String = "comments"
+
+        // La valeur "listComments" = au membre de la classe Post ce qui permet l'utilisation de toobject pour charger les données Firebase dans mes classes Model
+        private const val COLLECTION_COMMENTS : String = "listComments"
     }
 
     // Variable globale de Firebase Storage (pour stocker les images)
@@ -249,6 +252,18 @@ class PostFireStoreAPI : PostApi {
                         // Récupérer le premier document (puisque ID est unique)
                         val documentSnapshot = querySnapshot.documents[0]
                         val post = documentSnapshot.toObject(Post::class.java)
+
+                        // toObject évite de déclarer toutes ces lignes (mais il faut que la classe ait un constructeur vide)
+/*
+                        val id = documentSnapshot.id
+                        val title = documentSnapshot.getString("title") ?: ""
+                        val desc = documentSnapshot.getString("description") ?: ""
+                        val photoURL = documentSnapshot.getString("photoUrl") ?: ""
+                        val timestamp = documentSnapshot.getLong("timestamp") ?: 0L
+*/
+
+
+
                         if (post==null){
                             trySend(ResultCustom.Failure("Echec du toObject"))
                         }

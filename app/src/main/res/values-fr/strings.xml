@@ -39,5 +39,7 @@
     <string name="post_envoy">Post envoyé</string>
   <string name="Comment">Commentaire</string>
   <string name="CommentEmpty">Commentaire non valide</string>
+    <string name="no_comments">Pas de commentaire</string>
+  <string name="comments">%1$s commentaire(s)</string>
 
 </resources>

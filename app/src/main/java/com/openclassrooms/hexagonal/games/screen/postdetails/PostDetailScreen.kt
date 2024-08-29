@@ -2,11 +2,14 @@ package com.openclassrooms.hexagonal.games.screen.postdetails
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -37,7 +40,9 @@ import coil.compose.SubcomposeAsyncImage
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.domain.model.Post
+import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import com.openclassrooms.hexagonal.games.domain.model.User
+import com.openclassrooms.hexagonal.games.screen.homefeed.CommentCell
 import com.openclassrooms.hexagonal.games.screen.homefeed.ErrorComposable
 import com.openclassrooms.hexagonal.games.screen.homefeed.LoadingComposable
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
@@ -209,6 +214,8 @@ fun DetailPost(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // Display the Post
         ElevatedCard(
             modifier = Modifier.wrapContentSize(),
         ){
@@ -260,15 +267,54 @@ fun DetailPost(
             }
         }
 
+        // Liste des commentaires
+        if (postP.listComments.isEmpty()){
+            Text(
+                modifier = Modifier
+                    .padding(top = 16.dp),
+                text = stringResource(R.string.no_comments)
+            )
+        }
+        else{
+            Text(
+                modifier = Modifier
+                    .padding(top = 16.dp),
+                text = stringResource(R.string.comments, postP.listComments.size)
+            )
+
+            LazyColumn(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                items(postP.listComments) { comment ->
+                    CommentCell(
+                        commentP = comment
+                    )
+                }
+
+            }
+        }
+
 
     }
 
 }
 
+
+
 @Preview
 @PreviewScreenSizes
 @Composable
 private fun PostDetailScreenScaffoldPreview() {
+
+    val author = User("1", "JG")
+
+    val listPostComment = listOf(
+        PostComment(id="1",author = author, comment = "Mon commentaire"),
+        PostComment(id="2",author = author, comment = "Mon commentaire2"),
+        PostComment(id="3",author = author, comment = "Mon commentaire\nsur 2 lignes")
+    )
 
     val post = Post(
         id = "1",
@@ -279,7 +325,9 @@ private fun PostDetailScreenScaffoldPreview() {
         author = User(
             id = "1",
             firstname = "firstname"
-        )
+        ),
+        listComments = listPostComment
+
     )
 
 
