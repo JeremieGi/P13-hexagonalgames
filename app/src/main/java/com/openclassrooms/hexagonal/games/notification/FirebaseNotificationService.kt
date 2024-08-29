@@ -102,4 +102,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         )
     }
 
+
+    // Je prends un warning si je n'implémente pas cette méthode
+    override fun onNewToken(token: String) {
+        // Mais je ne gère pas les tokens dans ce projet
+
+        /**
+         * Le token d'inscription est un identifiant unique attribué à chaque appareil ou instance d'application. Lorsque votre application s'enregistre auprès de Firebase Cloud Messaging, un token unique est généré pour cet appareil. Ce token permet à Firebase d'identifier de manière unique chaque appareil ou utilisateur au sein de votre application.
+         */
+    }
+
 }

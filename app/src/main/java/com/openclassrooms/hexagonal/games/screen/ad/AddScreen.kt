@@ -32,7 +32,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -182,7 +181,7 @@ private fun CreatePost(
       }
 
 
-      var selectedImageUri by rememberSaveable() { mutableStateOf<Uri?>(null) }
+      var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
       // Callback du mediaPicker (Android 11 et supérieur
       val pickMediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->

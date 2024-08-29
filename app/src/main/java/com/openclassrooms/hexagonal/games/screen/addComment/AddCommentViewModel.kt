@@ -113,7 +113,7 @@ class AddCommentViewModel @Inject constructor(
 
         // Titre obligatoire
         if (_comment.value.comment.isEmpty()){
-            return "Commentaire non valide " // TODO JG Trad : Comment not valid
+            return "Commentaire non valide" // TODO Denis / JG Trad : Comment not valid => bonne pratique ?
 
         }
 

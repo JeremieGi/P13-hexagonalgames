@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * This class implements the PostApi interface and provides a fake in-memory data source for Posts.
@@ -21,7 +22,7 @@ class PostFakeApi : PostApi {
     User("3", "Wally")
   )
   
-  private val posts = MutableStateFlow(
+  private var posts = MutableStateFlow(
     mutableListOf(
       Post(
         "5",
@@ -116,7 +117,7 @@ class PostFakeApi : PostApi {
     return callbackFlow {
 
       if (post==null){
-        trySend(ResultCustom.Failure("No post find with ID = ${idPost}"))
+        trySend(ResultCustom.Failure("No post find with ID = $idPost"))
       }
       else{
         trySend(ResultCustom.Success(post))
@@ -131,15 +132,34 @@ class PostFakeApi : PostApi {
 
   override fun addCommentInPost(postId: String, comment: PostComment): Flow<ResultCustom<String>> {
 
-    val post = _loadByID(postId)
+    var bPostFind = false
+
+    posts.update { currentPosts ->
+      currentPosts.map { post ->
+        if (post.id == postId) {
+          bPostFind = true
+          post.copy(
+            listComments = post.listComments + comment // Ajouter le nouveau commentaire à la liste
+          )
+        } else {
+          post
+        }
+      }.toMutableList() // Convertir en liste mutable si nécessaire
+    }
+
 
     return callbackFlow {
 
-      if (post!=null){
+      if (bPostFind){
         trySend(ResultCustom.Success(""))
       }
       else{
-        trySend(ResultCustom.Failure("No post find with ID = ${postId}"))
+        trySend(ResultCustom.Failure("No post find with ID = $postId"))
+      }
+
+      // awaitClose : Suspend la coroutine actuelle jusqu'à ce que le canal soit fermé ou annulé et appelle le bloc donné avant de reprendre la coroutine.
+      awaitClose {
+
       }
     }
 

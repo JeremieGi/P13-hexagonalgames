@@ -71,7 +71,7 @@ class SettingsViewModel @Inject constructor () : ViewModel() {
 
 
   /**
-   * TODO Denis / JG code à montrer + bug : Si je désactive le channel puis que je le réactive, l'importance reste à IMPORTANCE_NONE
+   * TODO Denis prio 3 / JG code à montrer + bug : Si je désactive le channel puis que je le réactive, l'importance reste à IMPORTANCE_NONE
    */
   private fun setNotifications(application: Application, channelId: String, bEnableP : Boolean) {
 

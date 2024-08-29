@@ -303,6 +303,7 @@ class PostFireStoreAPI : PostApi {
                     trySend(ResultCustom.Failure(exception.message))
                 }
 
+            // awaitClose : Suspend la coroutine actuelle jusqu'à ce que le canal soit fermé ou annulé et appelle le bloc donné avant de reprendre la coroutine.
             awaitClose {
 
             }

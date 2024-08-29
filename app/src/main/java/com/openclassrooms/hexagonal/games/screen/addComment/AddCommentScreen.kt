@@ -135,7 +135,7 @@ private fun CreateComment(
                 .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
                 .show()
 
-            // TODO : Code exécuté 2 fois à la validation d'un commentaire
+            // TODO Denis Prio 2 : Code exécuté 2 fois à la validation d'un commentaire
             Log.d("Debug","onBackAfterSaveClick")
 
             onBackAfterSaveClick()
