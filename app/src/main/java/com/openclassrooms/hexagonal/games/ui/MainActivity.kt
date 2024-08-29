@@ -1,6 +1,7 @@
 package com.openclassrooms.hexagonal.games.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -103,6 +104,8 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
 
       // Extraire le postId de l'entrée de la pile
       val postId = backStackEntry.arguments?.getString("postId")
+
+      Log.d("Debug","AddCommentScreen => ouverture") // TODO : Prio 2 - On dirait que NavHost fait pleins de redessin
 
       AddCommentScreen(
         postId = postId,
