@@ -31,7 +31,10 @@
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Coming soon...
+Le fichier de paramétrage Firebase (google-services.json) n'est pas présent dans les sources car il contient une clé API. 
+Pour tester l'application, il vous faudra paramétrer votre propre application Firebase.
+
+
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
