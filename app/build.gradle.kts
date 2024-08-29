@@ -80,31 +80,31 @@ dependencies {
   testImplementation (libs.kotlinx.coroutines.test)
 
   // Coil = affichage d'URL dans un champ Image (comme Glide)
-  implementation("io.coil-kt:coil-compose:2.7.0")
+  implementation(libs.coil.compose)
 
   // Firebase
 
   // Import the Firebase BoM
   // garantit que toutes les bibliothèques Firebase utilisées dans un projet sont compatibles entre elles.
-  implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+  implementation(platform(libs.firebase.bom))
 
   // When using the BoM, don't specify versions in Firebase dependencies
-  implementation("com.google.firebase:firebase-analytics")
+  implementation(libs.firebase.analytics)
 
   // Authentification
-  implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+  implementation(libs.firebase.ui.auth)
 
   // Firestore = base de données NoSQL
-  implementation("com.google.firebase:firebase-firestore")
+  implementation(libs.firebase.firestore)
 
   // Firebase Storage (Stockage des images)
-  implementation("com.google.firebase:firebase-storage")
+  implementation(libs.firebase.storage)
 
   // Firebase -> système de notification
-  implementation("com.google.firebase:firebase-messaging")
+  implementation(libs.firebase.messaging)
 
   // Add the dependencies for the Crashlytics and Analytics libraries
-  implementation("com.google.firebase:firebase-crashlytics")
-  implementation("com.google.firebase:firebase-analytics")
+  implementation(libs.firebase.crashlytics)
+  implementation(libs.google.firebase.analytics)
 
 }

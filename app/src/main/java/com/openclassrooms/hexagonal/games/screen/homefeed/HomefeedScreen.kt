@@ -1,8 +1,8 @@
 package com.openclassrooms.hexagonal.games.screen.homefeed
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.widget.Toast
-import androidx.activity.ComponentActivity.RESULT_OK
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
