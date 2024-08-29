@@ -23,8 +23,8 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class PostRepositoryTest {
 
-    private lateinit var postFakeAPI : PostFakeApi
-    private lateinit var cutPostRepository : PostRepository //Class Under Test
+    private lateinit var postFakeAPI : PostFakeApi              // Pas de mock, je réutilise la FakeAPI initialement livré avec le projet
+    private lateinit var cutPostRepository : PostRepository     //Class Under Test
 
     @Before
     fun createRepository() {
@@ -113,6 +113,7 @@ class PostRepositoryTest {
 
             if (postResult is ResultCustom.Success){
 
+                // l'utilisateur chargé a bien le même ID que celui recherché
                 assertEquals("Vérification de l'ID", idUser, postResult.value.id)
 
             }

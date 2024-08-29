@@ -5,7 +5,9 @@ plugins {
   alias(libs.plugins.kotlin) apply false
   alias(libs.plugins.ksp) apply false
 
-  // Add the dependency for the Google services Gradle plugin
+  // dependency for the Google services Gradle plugin
   id("com.google.gms.google-services") version "4.4.2" apply false
 
+  // dependency for the Crashlytics Gradle plugin
+  id("com.google.firebase.crashlytics") version "2.9.9" apply false
 }

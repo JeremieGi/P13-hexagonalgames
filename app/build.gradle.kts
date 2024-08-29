@@ -3,8 +3,12 @@ plugins {
   alias(libs.plugins.kotlin)
   alias(libs.plugins.ksp)
   alias(libs.plugins.hilt)
-  // Add the Google services Gradle plugin
+
+  // Google services Gradle plugin
   id("com.google.gms.google-services")
+
+  // Crashlytics Gradle plugin
+  id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -98,5 +102,9 @@ dependencies {
 
   // Firebase -> système de notification
   implementation("com.google.firebase:firebase-messaging")
+
+  // Add the dependencies for the Crashlytics and Analytics libraries
+  implementation("com.google.firebase:firebase-crashlytics")
+  implementation("com.google.firebase:firebase-analytics")
 
 }

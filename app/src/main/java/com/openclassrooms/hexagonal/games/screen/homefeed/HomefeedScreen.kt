@@ -177,7 +177,16 @@ fun HomefeedScreen(
                 )
               }
             )
-
+            DropdownMenuItem(
+              onClick = {
+                throw RuntimeException("Test Crashlytics") // Force a crash
+              },
+              text = {
+                Text(
+                  text = "Test Crashlytics (plante l'appli)"
+                )
+              }
+            )
           }
         }
       )

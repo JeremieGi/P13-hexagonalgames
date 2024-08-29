@@ -2,10 +2,7 @@ package com.openclassrooms.hexagonal.games
 
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.PostComment
-import com.openclassrooms.hexagonal.games.domain.model.User
-import org.junit.Assert
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
 
 class PostTest {
