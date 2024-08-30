@@ -284,7 +284,8 @@ fun DetailPost(
                 text = stringResource(R.string.comments, postP.listComments.size)
             )
 
-            // TODO Denis Prio 1 : Possibilité d'utiliser FirebaseUI Firestore ici ? Doc ? J'ai l'impression que c'est que pour les UI en XML (utilisation d'adapteur)
+            // Possibilité d'utiliser FirebaseUI Firestore ici ? Doc ?
+            // J'ai l'impression que c'est que pour les UI en XML (utilisation d'adapteur)
 
             // Commentaires ordonnés
             val comments = postP.listCommentsRecentsFirst()

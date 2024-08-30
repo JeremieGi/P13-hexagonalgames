@@ -113,7 +113,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
       val savedStateHandle = navHostController.previousBackStackEntry?.savedStateHandle
 
 
-      Log.d("Debug","AddCommentScreen => ouverture") // TODO : Prio 2 - On dirait que NavHost fait pleins de redessin
+      Log.d("Debug","AddCommentScreen => ouverture")
 
       AddCommentScreen(
         postId = postId,

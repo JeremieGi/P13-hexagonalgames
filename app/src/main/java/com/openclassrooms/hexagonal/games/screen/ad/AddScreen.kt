@@ -133,6 +133,7 @@ private fun CreatePost(
         .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
         .show()
 
+      // TODO JG : Code exécuté 2 fois - Mettre un contrôle
       onBackAfterSaveClick()
     }
 

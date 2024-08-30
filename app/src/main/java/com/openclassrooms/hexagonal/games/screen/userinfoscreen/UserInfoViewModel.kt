@@ -19,7 +19,7 @@ class UserInfoViewModel @Inject constructor(
     private val userRepository : UserRepository
 ) : ViewModel() {
 
-    // TODO Denis : Si je veux récupérer le résultat d'une procédure comme deleteUser, je suis obligé de déclarer une variable MutableStateFlow ?
+    // Si je veux récupérer le résultat d'une procédure comme deleteUser, je suis obligé de déclarer une variable MutableStateFlow ? OUI
     // UI state - Résultat du delete
     private val _uiStateUserDeleteResult = MutableStateFlow<ResultCustom<String>?>(null)
     val uiStateUserDeleteResult: StateFlow<ResultCustom<String>?> = _uiStateUserDeleteResult.asStateFlow() // Accès en lecture seule de l'extérieur

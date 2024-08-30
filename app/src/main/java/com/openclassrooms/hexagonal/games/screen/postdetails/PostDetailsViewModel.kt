@@ -29,7 +29,7 @@ class PostDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             postRepository.loadPostByID(idPost).collect { result ->
-                // TODO Denis : Je ne fais pas de classe UIState dédié. Il faudrait ?
+                // Je ne fais pas de classe UIState dédié
                 _uiStatePostResult.value = result
             }
         }

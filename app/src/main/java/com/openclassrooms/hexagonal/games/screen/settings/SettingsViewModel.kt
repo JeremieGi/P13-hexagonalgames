@@ -71,7 +71,8 @@ class SettingsViewModel @Inject constructor () : ViewModel() {
 
 
   /**
-   * TODO Denis prio 3 / JG code à montrer + bug : Si je désactive le channel puis que je le réactive, l'importance reste à IMPORTANCE_NONE
+   * bug : Si je désactive le channel puis que je le réactive, l'importance reste à IMPORTANCE_NONE
+   * TODO JG : https://stackoverflow.com/questions/60775794/android-how-to-disable-notification-channel-programmatically/76852825#76852825
    */
   private fun setNotifications(application: Application, channelId: String, bEnableP : Boolean) {
 
@@ -111,7 +112,7 @@ class SettingsViewModel @Inject constructor () : ViewModel() {
 
         }
 
-        // TODO Denis : A confirmer avec Denis, le canal a l'air d'être conservé en cache
+        // le canal a l'air d'être conservé en cache
         // Si je désactive les notifications, en relançant l'appli, le chanel reste désactivé
 
       } else {
@@ -120,6 +121,7 @@ class SettingsViewModel @Inject constructor () : ViewModel() {
         // ce qui doit être géré au niveau de l'application elle-même.
 
         // J'ai mis dans gradle, Oreo 'Android 8' en version minimale
+        // Sinon on pourrait utiliser les SharedPreferences
       }
     }
   }

@@ -142,7 +142,6 @@ private fun CreateComment(
                     .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
                     .show()
 
-                // TODO Denis Prio 2 : Code exécuté 2 fois à la validation d'un commentaire si je ne protège pas avec LaunchedEffect
                 Log.d("Debug","onBackAfterSaveClick")
 
                 onCommentAdded()

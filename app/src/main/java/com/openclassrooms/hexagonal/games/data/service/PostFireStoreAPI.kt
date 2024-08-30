@@ -25,9 +25,8 @@ class PostFireStoreAPI : PostApi {
 
         private const val COLLECTION_POSTS : String = "posts"
 
-
         // La valeur "listComments" = au membre de la classe Post ce qui permet l'utilisation de toobject pour charger les données Firebase dans mes classes Model
-        // TODO Denis : Risqué pour la maintenance : Je me demande si il ne faudrait pas faire une calsse DTO comme avec Room
+        // Risqué pour la maintenance : Je me demande si il ne faudrait pas faire une classe DTO comme avec Room
         private const val COLLECTION_COMMENTS : String = "listComments"
     }
 
@@ -117,9 +116,9 @@ class PostFireStoreAPI : PostApi {
 
     override fun addPost(post: Post) : Flow<ResultCustom<String>> {
 
-        // TODO Denis : En mode avion, je n'ai pas d'erreur => il ne se passe rien
+        // TODO JG : En mode avion, je n'ai pas d'erreur => Vérifier la connexion Internet en amont
         // mais les posts (sans images) sont ajoutés dès que la connexion revient
-        // Comment indiquer çà à l'utilisateur ?
+
 
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
@@ -210,7 +209,7 @@ class PostFireStoreAPI : PostApi {
                     postDocument.set(post)
                         .addOnSuccessListener {
                             // Succès de l'ajout dans Firestore
-                            trySend(ResultCustom.Success("Post OK")) // TODO Denis : Si je veux utiliser les ressources String ici, je suis obligé de passer le context en paramètre ?
+                            trySend(ResultCustom.Success("Post OK"))
                         }
                         .addOnFailureListener { firestoreException ->
                             // Gestion des erreurs lors de l'ajout dans Firestore
@@ -291,7 +290,7 @@ class PostFireStoreAPI : PostApi {
         comment: PostComment
     ): Flow<ResultCustom<String>> {
 
-        // TODO Denis : En mode avion, aucun trySend n'est exécuté (= aucun listener)
+        // TODO JG : En mode avion, aucun trySend n'est exécuté (= aucun listener) => Vérifier la connexion
         // Les commentaires sont tout de même ajoutés à la reconnexion
         // Je dois gérer çà à la main ?
 
@@ -309,6 +308,7 @@ class PostFireStoreAPI : PostApi {
                 .addOnCanceledListener {
                     trySend(ResultCustom.Failure("addOnCanceledListener"))
                 }
+
 
             // awaitClose : Suspend la coroutine actuelle jusqu'à ce que le canal soit fermé ou annulé et appelle le bloc donné avant de reprendre la coroutine.
             awaitClose {

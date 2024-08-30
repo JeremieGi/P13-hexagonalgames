@@ -107,7 +107,7 @@ class AddCommentViewModel @Inject constructor(
 
         // Titre obligatoire
         if (_comment.value.isEmpty()){
-            return "Commentaire non valide" // TODO Denis / JG Trad : Comment not valid => bonne pratique pour utilisation des resources dans un ViewModel ?
+            return "Commentaire non valide"
 
         }
 

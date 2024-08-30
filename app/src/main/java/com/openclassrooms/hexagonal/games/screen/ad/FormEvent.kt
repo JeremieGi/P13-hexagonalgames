@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.annotation.StringRes
 import com.openclassrooms.hexagonal.games.R
 
-// TODO : Denis : C'est courant d'utiliser une sealed class pour les états d'un formulaire ?
 
 /**
  * A sealed class representing different events that can occur on a form.
