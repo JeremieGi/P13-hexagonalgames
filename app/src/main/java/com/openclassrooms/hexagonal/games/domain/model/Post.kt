@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.domain.model
 
+import androidx.compose.runtime.Stable
 import java.io.Serializable
 
 // Tous les éléments ont des paramètres par défauts pour pouvoir utiliser la fonction toObjects
@@ -9,6 +10,7 @@ import java.io.Serializable
  * ID, title, description, photo URL, creation timestamp, and the author (User object).
  * The class implements Serializable to allow for potential serialization needs.
  */
+@Stable // Marking a class as @Stable indicates that the class's instances are stable and their properties will not change unexpectedly.
 data class Post(
   /**
    * Unique identifier for the Post.

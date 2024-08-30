@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.domain.model
 
+import androidx.compose.runtime.Stable
 import java.io.Serializable
 
 /**
@@ -7,6 +8,7 @@ import java.io.Serializable
  * their ID, first name, and last name. The class implements Serializable to allow for potential
  * serialization needs.
  */
+@Stable
 data class User(
   /**
    * Unique identifier for the User.

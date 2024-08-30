@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO Denis : Ici je pourrais découper ce repository en mettant les accès à Firebase dans une Interface.
+// Ici je pourrais découper ce repository en mettant les accès à Firebase dans une Interface.
 // Mais çà n'aurait pas de valeur ajoutée pour les TAs (car en faisant un mock de la partie Firebase, je vais tester encore un repo qui ne fait que passe-plat)
 
 @Singleton

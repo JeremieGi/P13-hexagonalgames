@@ -57,12 +57,12 @@ class AddViewModel @Inject constructor(
   /**
    * StateFlow derived from the post that emits a FormError if the title is empty, null otherwise.
    */
-  val error = post.map {
+  val error = post.map { // chaque fois qu'il y a une nouvelle valeur dans _comment, la fonction verifyPost() est appelée.
     verifyPost()
   }.stateIn(
-    scope = viewModelScope,
-    started = SharingStarted.WhileSubscribed(5_000),
-    initialValue = null,
+    scope = viewModelScope, // viewModelScope est le scope de coroutine fourni par le ViewModel, garantissant que le StateFlow s'annule lorsque le ViewModel est détruit.
+    started = SharingStarted.WhileSubscribed(5_000), //  continue à émettre et à collecter des valeurs pendant qu'il y a des abonnés et se désactive 5000 millisecondes (5 secondes) après que le dernier abonné se soit désinscrit.
+    initialValue = null, // valeur initiale de error est null
   )
   
   /**
@@ -89,7 +89,7 @@ class AddViewModel @Inject constructor(
 
       is FormEvent.PhotoChanged -> {
 
-        // formEvent.photo.toString() => Si nul renvoie la chaine "null" => pas bon
+        // formEvent.photo.toString() => Si null renvoie la chaine "null" => pas bon
 
         val sPhotoURL : String?
         if (formEvent.photo==null){
@@ -124,9 +124,6 @@ class AddViewModel @Inject constructor(
 
     val postWithAuthor = _post.value.copy(author = userParam)
 
-//    postRepository.addPost(postWithAuthor).onEach { resultPost ->
-//      _uiStatePostResult.value = resultPost
-//    }
 
     viewModelScope.launch {
       postRepository.addPost(postWithAuthor).collect { result ->

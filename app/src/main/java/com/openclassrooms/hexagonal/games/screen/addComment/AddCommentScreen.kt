@@ -79,20 +79,22 @@ fun AddCommentScreen(
         ) { contentPadding ->
 
             val currentComment by viewModel.comment.collectAsStateWithLifecycle()
+
             val error by viewModel.error.collectAsStateWithLifecycle()
 
             // Obtenir le résultat de l'enregistrement du commentaire
             val postResult by viewModel.uiStatePostCommentResult.collectAsStateWithLifecycle()
 
             Log.d("Debug","CreateComment : postResult = {${postResult}}")
-            Log.d("Debug","CreateComment : currentComment = {${currentComment.comment}}")
+            Log.d("Debug","CreateComment : currentComment = {${currentComment}}")
             Log.d("Debug","CreateComment : error = {${error.toString()}}")
 
             CreateComment(
                 modifier = Modifier.padding(contentPadding),
                 error = error,
-                currentComment = currentComment.comment,
+                currentComment = currentComment,
                 onCommentChanged = { viewModel.onPostCommentChanged( it ) },
+                // plus explicite : onCommentChanged = { comment: String -> viewModel.onPostCommentChanged(comment) }
                 stateResultSave = postResult,
                 onSaveCommentClicked = { viewModel.addCommentToPost(postId) },
                 onBackAfterSaveClick = onBackClick

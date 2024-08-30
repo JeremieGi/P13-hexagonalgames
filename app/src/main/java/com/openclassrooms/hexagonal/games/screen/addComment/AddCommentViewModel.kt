@@ -27,22 +27,14 @@ class AddCommentViewModel @Inject constructor(
     /**
      * Internal mutable state flow representing the current comment being edited.
      */
-    private var _comment = MutableStateFlow(
-        PostComment(
-            id = UUID.randomUUID().toString(),
-            comment = "",
-            timestamp = System.currentTimeMillis(),
-            author = null
-        )
-    )
+    private var _comment = MutableStateFlow("" )
 
     /**
      * Public state flow representing the current comment being edited.
      * This is immutable for consumers.
      */
-    val comment: StateFlow<PostComment>
+    val comment: StateFlow<String>
         get() = _comment
-
 
 
     // UI state - Résultat de l'ajout du commentaire
@@ -53,12 +45,12 @@ class AddCommentViewModel @Inject constructor(
     /**
      * StateFlow derived from the post that emits a FormError if the title is empty, null otherwise.
      */
-    val error = _comment.map {
+    val error = comment.map { // chaque fois qu'il y a une nouvelle valeur dans _comment, la fonction verifyPost() est appelée.
         verifyPost()
     }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = null,
+        scope = viewModelScope, // viewModelScope est le scope de coroutine fourni par le ViewModel, garantissant que le StateFlow s'annule lorsque le ViewModel est détruit.
+        started = SharingStarted.WhileSubscribed(5_000), //  continue à émettre et à collecter des valeurs pendant qu'il y a des abonnés et se désactive 5000 millisecondes (5 secondes) après que le dernier abonné se soit désinscrit.
+        initialValue = null, // valeur initiale de error est null
     )
 
     /**
@@ -68,9 +60,7 @@ class AddCommentViewModel @Inject constructor(
      */
     fun onPostCommentChanged(commentInput : String) {
 
-        _comment.value = _comment.value.copy(
-            comment = commentInput
-        )
+        _comment.value = commentInput
 
     }
 
@@ -90,8 +80,12 @@ class AddCommentViewModel @Inject constructor(
             null // Gérer en amont : Un compte est nécessaire pour ajouter un commentaire
         }
 
-        val commentWithAuthor = _comment.value.copy(author = userParam)
-
+        val commentWithAuthor = PostComment(
+            id = UUID.randomUUID().toString(),
+            comment = _comment.value,
+            timestamp = System.currentTimeMillis(),
+            author = userParam
+        )
 
         viewModelScope.launch {
             postRepository.addCommentInPost(postID, commentWithAuthor).collect { result ->
@@ -112,8 +106,8 @@ class AddCommentViewModel @Inject constructor(
     private fun verifyPost(): String? {
 
         // Titre obligatoire
-        if (_comment.value.comment.isEmpty()){
-            return "Commentaire non valide" // TODO Denis / JG Trad : Comment not valid => bonne pratique ?
+        if (_comment.value.isEmpty()){
+            return "Commentaire non valide" // TODO Denis / JG Trad : Comment not valid => bonne pratique pour utilisation des resources dans un ViewModel ?
 
         }
 
