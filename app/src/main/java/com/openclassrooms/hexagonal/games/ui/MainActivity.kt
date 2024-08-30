@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
 
 }
 
-
+private const val idPostArg = "postId"
+private const val refresh_comments = "refresh_comments"
 
 
 @Composable
@@ -88,7 +89,10 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.PostDetail.route) { backStackEntry ->
 
       // Extraire le postId de l'entrée de la pile
-      val postId = backStackEntry.arguments?.getString("postId")
+      val postId = backStackEntry.arguments?.getString(idPostArg)
+
+      // Les commentaires doivent être rafraichis ? (Ajout d'un commentaire depuis AddCommentToPost)
+      val refreshComments = backStackEntry.savedStateHandle?.get<Boolean>(refresh_comments)
 
       PostDetailScreen(
         postId = postId,
@@ -96,20 +100,28 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
         onFABAddCommentClick = { idPost ->
           // L'ID du post est transféré
           navHostController.navigate(Screen.AddCommentToPost.createRoute(idPost))
-        }
+        },
+        reloadPost = refreshComments
       )
     }
 
     composable(route = Screen.AddCommentToPost.route) { backStackEntry ->
 
       // Extraire le postId de l'entrée de la pile
-      val postId = backStackEntry.arguments?.getString("postId")
+      val postId = backStackEntry.arguments?.getString(idPostArg)
+
+      val savedStateHandle = navHostController.previousBackStackEntry?.savedStateHandle
+
 
       Log.d("Debug","AddCommentScreen => ouverture") // TODO : Prio 2 - On dirait que NavHost fait pleins de redessin
 
       AddCommentScreen(
         postId = postId,
         onBackClick = { navHostController.navigateUp() },
+        onCommentAdded = {
+          savedStateHandle?.set(refresh_comments, true) // Permet d'indiquer à la fenêtre parente (PostDetail) qu'un commentaire a été ajouté
+          navHostController.navigateUp()
+        }
       )
 
     }

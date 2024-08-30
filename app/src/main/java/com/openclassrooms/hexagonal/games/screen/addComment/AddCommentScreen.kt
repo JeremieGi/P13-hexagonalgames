@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +44,10 @@ import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 @Composable
 fun AddCommentScreen(
     modifier: Modifier = Modifier,
-    postId : String?,
+    postId: String?,
     viewModel: AddCommentViewModel = hiltViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onCommentAdded: () -> Unit
 ) {
 
     if (postId.isNullOrEmpty()){
@@ -97,7 +99,7 @@ fun AddCommentScreen(
                 // plus explicite : onCommentChanged = { comment: String -> viewModel.onPostCommentChanged(comment) }
                 stateResultSave = postResult,
                 onSaveCommentClicked = { viewModel.addCommentToPost(postId) },
-                onBackAfterSaveClick = onBackClick
+                onCommentAdded = onCommentAdded
             )
         }
 
@@ -113,46 +115,52 @@ private fun CreateComment(
     onSaveCommentClicked: () -> Unit,
     error: String?,
     stateResultSave: ResultCustom<String>?,
-    onBackAfterSaveClick: () -> Unit
+    onCommentAdded: () -> Unit
 ) {
 
     val context = LocalContext.current
 
     val scrollState = rememberScrollState()
 
-    // Gérer les différents états du résultat d'ajout d'un post
-    when (stateResultSave) {
+    // Code exécuté 2 fois à la validation d'un commentaire si je ne protège pas avec LaunchedEffect ???
+    LaunchedEffect(stateResultSave) {
 
-        null -> {
-            // Au 1er appel
+        // Gérer les différents états du résultat d'ajout d'un post
+        when (stateResultSave) {
+
+            null -> {
+                // Au 1er appel
+            }
+
+            is ResultCustom.Loading -> {
+                // N'arrivera pas
+            }
+
+            is ResultCustom.Success -> {
+                // Afficher un message de succès et fermer l'activity
+                Toast
+                    .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
+                    .show()
+
+                // TODO Denis Prio 2 : Code exécuté 2 fois à la validation d'un commentaire si je ne protège pas avec LaunchedEffect
+                Log.d("Debug","onBackAfterSaveClick")
+
+                onCommentAdded()
+            }
+
+            is ResultCustom.Failure -> {
+                // Afficher un message d'erreur suite à l'envoi du Post
+                val errorMessage = stateResultSave.errorMessage ?: context.getString(R.string.unknowError)
+                Toast
+                    .makeText(context, errorMessage, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+
         }
-
-        is ResultCustom.Loading -> {
-            // N'arrivera pas
-        }
-
-        is ResultCustom.Success -> {
-            // Afficher un message de succès et fermer l'activity
-            Toast
-                .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
-                .show()
-
-            // TODO Denis Prio 2 : Code exécuté 2 fois à la validation d'un commentaire
-            Log.d("Debug","onBackAfterSaveClick")
-
-            onBackAfterSaveClick()
-        }
-
-        is ResultCustom.Failure -> {
-            // Afficher un message d'erreur suite à l'envoi du Post
-            val errorMessage = stateResultSave.errorMessage ?: context.getString(R.string.unknowError)
-            Toast
-                .makeText(context, errorMessage, Toast.LENGTH_SHORT)
-                .show()
-        }
-
 
     }
+
 
     Column(
         modifier = modifier
@@ -209,7 +217,7 @@ private fun CreatePostPreview() {
             onSaveCommentClicked = { },
             error = null,
             stateResultSave = ResultCustom.Success(""),
-            onBackAfterSaveClick = {}
+            onCommentAdded = {}
         )
     }
 }

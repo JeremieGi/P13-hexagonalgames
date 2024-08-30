@@ -27,7 +27,7 @@ class PostFireStoreAPI : PostApi {
 
 
         // La valeur "listComments" = au membre de la classe Post ce qui permet l'utilisation de toobject pour charger les données Firebase dans mes classes Model
-        // TODO Denis : Risqué pour la maintenance : Je me demande si il ne faudrait pas faire une calsse DTo comme avec Room
+        // TODO Denis : Risqué pour la maintenance : Je me demande si il ne faudrait pas faire une calsse DTO comme avec Room
         private const val COLLECTION_COMMENTS : String = "listComments"
     }
 
@@ -291,6 +291,10 @@ class PostFireStoreAPI : PostApi {
         comment: PostComment
     ): Flow<ResultCustom<String>> {
 
+        // TODO Denis : En mode avion, aucun trySend n'est exécuté (= aucun listener)
+        // Les commentaires sont tout de même ajoutés à la reconnexion
+        // Je dois gérer çà à la main ?
+
         val task = this.addComment(postId,comment)
 
         return callbackFlow {
@@ -301,6 +305,9 @@ class PostFireStoreAPI : PostApi {
                 }
                 .addOnFailureListener { exception ->
                     trySend(ResultCustom.Failure(exception.message))
+                }
+                .addOnCanceledListener {
+                    trySend(ResultCustom.Failure("addOnCanceledListener"))
                 }
 
             // awaitClose : Suspend la coroutine actuelle jusqu'à ce que le canal soit fermé ou annulé et appelle le bloc donné avant de reprendre la coroutine.

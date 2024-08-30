@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -51,10 +52,11 @@ import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 @Composable
 fun PostDetailScreen(
     modifier: Modifier = Modifier,
-    postId : String?,
+    postId: String?,
     viewModel: PostDetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onFABAddCommentClick : (idPost : String) -> Unit
+    onFABAddCommentClick: (idPost: String) -> Unit,
+    reloadPost: Boolean?
 ) {
 
 
@@ -66,16 +68,16 @@ fun PostDetailScreen(
     }
     else{
 
-        LaunchedEffect(postId) {
-            // Coroute exécutée lorsque postId change
-            // Coroute exécutée aussi à la rotation de l'écran : Lorsqu'une activité ou un fragment est recomposé en réponse à un changement de configuration, Compose recompose toute l'UI visible.
-            viewModel.loadPost(postId)
-        }
-
         // Lecture du post
         val uiStatePost by viewModel.uiStatePostResult.collectAsStateWithLifecycle(
             initialValue = ResultCustom.Loading
         )
+
+        LaunchedEffect(postId, reloadPost) {
+            // Coroute exécutée lorsque postId change
+            // Coroute exécutée aussi à la rotation de l'écran : Lorsqu'une activité ou un fragment est recomposé en réponse à un changement de configuration, Compose recompose toute l'UI visible.
+            viewModel.loadPost(postId)
+        }
 
         PostDetailScreenScaffold(
             modifier = modifier,
@@ -283,12 +285,25 @@ fun DetailPost(
             )
 
             // TODO Denis Prio 1 : Possibilité d'utiliser FirebaseUI Firestore ici ? Doc ? J'ai l'impression que c'est que pour les UI en XML (utilisation d'adapteur)
+
+            // Commentaires ordonnés
+            val comments = postP.listCommentsRecentsFirst()
+
+
+            val listState = rememberLazyListState()
+
+            // LaunchedEffect pour faire défiler vers le haut lorsque comments change
+            LaunchedEffect(comments) {
+                listState.scrollToItem(0)
+            }
+
             LazyColumn(
                 modifier = Modifier.padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = listState, // listState pour contrôler le défilement
             ) {
 
-                items(postP.listCommentsRecentsFirst(), key={it.id} ) { comment ->
+                items(comments, key={it.id} ) { comment ->
                     CommentCell(
                         commentP = comment
                     )
