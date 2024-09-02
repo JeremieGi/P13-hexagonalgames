@@ -1,9 +1,11 @@
 package com.openclassrooms.hexagonal.games.data.repository
 
+import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.service.PostApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +17,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class PostRepository @Inject constructor(
-  private val postApi: PostApi
+  private val postApi: PostApi,
+  private val injectedContext: InjectedContext // Conetxte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
 ) {
   
   /**
@@ -36,20 +39,58 @@ class PostRepository @Inject constructor(
    */
   fun addPost(post: Post): Flow<ResultCustom<String>> {
 
-    return postApi.addPost(post)
+    if (!injectedContext.isInternetAvailable()){
+      return flow {
+        emit(ResultCustom.Failure(injectedContext.getInjectedContext().getString(R.string.no_network)))
+      }
+    }
+    else{
+      return postApi.addPost(post)
+    }
+
 
   }
 
   fun loadAllPosts() {
-      _flowPost = postApi.getPostsOrderByCreationDateDesc()
+
+    _flowPost = if (!injectedContext.isInternetAvailable()) {
+      // Créer un flux d'erreur si Internet n'est pas disponible
+      flow {
+        emit(ResultCustom.Failure(injectedContext.getInjectedContext().getString(R.string.no_network)))
+      }
+    } else {
+      // Assigner le flux retourné par l'API si Internet est disponible
+      postApi.getPostsOrderByCreationDateDesc()
+    }
+
   }
 
   fun loadPostByID(idPost : String) : Flow<ResultCustom<Post>> {
-    return postApi.loadPostByID(idPost)
+
+    if (!injectedContext.isInternetAvailable()) {
+      return flow {
+        emit(
+          ResultCustom.Failure(
+            injectedContext.getInjectedContext().getString(R.string.no_network)
+          )
+        )
+      }
+    } else {
+      return postApi.loadPostByID(idPost)
+    }
   }
 
   fun addCommentInPost(postId: String, comment: PostComment): Flow<ResultCustom<String>> {
-    return postApi.addCommentInPost(postId,comment)
+
+    if (!injectedContext.isInternetAvailable()){
+      return flow {
+        emit(ResultCustom.Failure(injectedContext.getInjectedContext().getString(R.string.no_network)))
+      }
+    }
+    else{
+      return postApi.addCommentInPost(postId,comment)
+    }
+
   }
   
 }

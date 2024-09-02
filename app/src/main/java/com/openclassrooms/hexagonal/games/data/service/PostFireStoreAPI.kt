@@ -116,8 +116,8 @@ class PostFireStoreAPI : PostApi {
 
     override fun addPost(post: Post) : Flow<ResultCustom<String>> {
 
-        // TODO JG : En mode avion, je n'ai pas d'erreur => Vérifier la connexion Internet en amont
-        // mais les posts (sans images) sont ajoutés dès que la connexion revient
+        // En mode avion, je n'ai pas d'erreur ici (problème résolu car je vérifie la connexion Internet en amont)
+        // Si on arrivait ici sans connexion, les posts (sans images) seraient ajoutés dès que la connexion revient
 
 
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.

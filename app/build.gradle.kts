@@ -78,6 +78,7 @@ dependencies {
   androidTestImplementation(libs.ext.junit)
   androidTestImplementation(libs.espresso.core)
   testImplementation (libs.kotlinx.coroutines.test)
+  testImplementation("io.mockk:mockk:1.13.3")
 
   // Coil = affichage d'URL dans un champ Image (comme Glide)
   implementation(libs.coil.compose)

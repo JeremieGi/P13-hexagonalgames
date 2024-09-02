@@ -36,9 +36,10 @@
   <string name="close">Close</string>
   <string name="unknown_error">Unknown error</string>
   <string name="nologinuser">No user login</string>
-    <string name="post_envoy">Post envoyé</string>
+  <string name="post_envoy">Post envoyé</string>
   <string name="Comment">Comment</string>
   <string name="CommentEmpty">Comment not valid</string>
-    <string name="no_comments">No comments</string>
+  <string name="no_comments">No comments</string>
   <string name="comments">%1$s comment(s)</string>
+  <string name="no_network">No network</string>
 </resources>

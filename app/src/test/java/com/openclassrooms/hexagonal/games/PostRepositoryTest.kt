@@ -1,11 +1,15 @@
 package com.openclassrooms.hexagonal.games
 
+import com.openclassrooms.hexagonal.games.data.repository.InjectedContext
 import com.openclassrooms.hexagonal.games.data.repository.PostRepository
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
 import com.openclassrooms.hexagonal.games.data.service.PostFakeApi
 import com.openclassrooms.hexagonal.games.domain.model.Post
 import com.openclassrooms.hexagonal.games.domain.model.PostComment
 import com.openclassrooms.hexagonal.games.domain.model.User
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,13 +28,24 @@ import org.junit.Test
 class PostRepositoryTest {
 
     private lateinit var postFakeAPI : PostFakeApi              // Pas de mock, je réutilise la FakeAPI initialement livré avec le projet
+
+    @MockK
+    private lateinit var mockInjectedContext: InjectedContext       // Mock
+
     private lateinit var cutPostRepository : PostRepository     //Class Under Test
 
     @Before
     fun createRepository() {
 
+        // Initialiser MockK
+        MockKAnnotations.init(this) // Initialisation des mocks avant les tests
+
         postFakeAPI = PostFakeApi() // API reuse for Test
-        cutPostRepository = PostRepository(postFakeAPI)
+        cutPostRepository = PostRepository(postFakeAPI, mockInjectedContext)
+
+        // Configuration du comportement du mock injectedContext
+        // La connexion Internet renvoie Vrai
+        every { mockInjectedContext.isInternetAvailable() } returns true
 
     }
 

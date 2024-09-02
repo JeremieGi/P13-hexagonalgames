@@ -1,10 +1,13 @@
 package com.openclassrooms.hexagonal.games.di
 
+import android.content.Context
+import com.openclassrooms.hexagonal.games.data.repository.InjectedContext
 import com.openclassrooms.hexagonal.games.data.service.PostApi
 import com.openclassrooms.hexagonal.games.data.service.PostFireStoreAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -28,6 +31,13 @@ class AppModule {
   fun providePostApi(): PostApi {
     //return PostFakeApi()
     return PostFireStoreAPI() // Branchement dans l'appli de la base de données FireStore
+  }
+
+
+  @Provides
+  @Singleton
+  fun provideConnectivityChecker(@ApplicationContext context: Context): InjectedContext {
+    return InjectedContext(context) // Branchement dans l'appli de la base de données FireStore
   }
 
 }
