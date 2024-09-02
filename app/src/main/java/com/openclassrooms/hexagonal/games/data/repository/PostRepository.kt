@@ -48,7 +48,6 @@ class PostRepository @Inject constructor(
       return postApi.addPost(post)
     }
 
-
   }
 
   fun loadAllPosts() {

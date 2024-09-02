@@ -16,7 +16,6 @@ interface PostApi {
    *
    * @return A list of Posts sorted by creation date (newest first).
    */
-  //fun getPostsOrderByCreationDateDesc(): Flow<List<Post>>
   fun getPostsOrderByCreationDateDesc(): Flow<ResultCustom<List<Post>>> // Nouvelle signature pour gestion des erreurs
 
   /**

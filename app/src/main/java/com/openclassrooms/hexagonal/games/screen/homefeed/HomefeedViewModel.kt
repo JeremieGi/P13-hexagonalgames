@@ -42,31 +42,8 @@ class HomefeedViewModel @Inject constructor(
 
   init {
     viewModelScope.launch {
-
       postRepository.flowPost.collect {
-
         _postsStateFlow.value = it
-
-        /*
-        when(it) {
-
-          is ResultCustom.Loading -> {
-
-          }
-
-          is ResultCustom.Success -> {
-            _postsStateFlow.value = it
-          }
-
-          is ResultCustom.Failure -> {
-
-          }
-
-
-        }
-        */
-
-
       }
     }
   }

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Hexagonal Games</string>
   <string name="action_settings">Settings</string>
   <string name="action_myaccount">My account</string>
@@ -33,7 +33,6 @@
   <string name="close">Close</string>
   <string name="unknown_error">Unknown error</string>
   <string name="nologinuser">No user login</string>
-  <string name="post_envoy">Post envoyé</string>
   <string name="Comment">Comment</string>
   <string name="CommentEmpty">Comment not valid</string>
   <string name="no_comments">No comments</string>

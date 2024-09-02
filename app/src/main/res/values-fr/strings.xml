@@ -33,7 +33,6 @@
   <string name="close">Fermer</string>
   <string name="unknown_error">Erreur inconnue</string>
   <string name="nologinuser">Aucun utilisateur n\'est identifié</string>
-  <string name="post_envoy">Post envoyé</string>
   <string name="Comment">Commentaire</string>
   <string name="CommentEmpty">Commentaire non valide</string>
    <string name="no_comments">Pas de commentaire</string>
