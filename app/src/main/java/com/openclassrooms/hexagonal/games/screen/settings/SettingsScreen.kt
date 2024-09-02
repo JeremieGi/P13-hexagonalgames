@@ -107,7 +107,6 @@ fun SettingsScreen(
 private fun SettingsComposable(
   modifier: Modifier = Modifier,
   createChannelP: () -> Unit,
-  //onNotificationDisabledClicked: () -> Unit,
   operationStateP: ResultCustom<String>?,
   bChannelAlreadyExistP: () -> Boolean,
   bChannelIsEnabledP: () -> Boolean
@@ -283,6 +282,7 @@ fun ChannelPreferenceComposable(
 }
 
 
+
 @Composable
 fun ButtonLaunchPreferences(
   sTextLabelButton: String,
@@ -319,6 +319,7 @@ fun ButtonLaunchPreferences(
 
 }
 
+// Préviews non gérées
 @PreviewLightDark
 @PreviewScreenSizes
 @Composable
@@ -329,12 +330,12 @@ private fun SettingsPreview() {
 
     SettingsComposable(
       createChannelP = { },
-      operationStateP = null,
+      operationStateP = ResultCustom.Success("test"),
       bChannelAlreadyExistP = mockFalse,
       bChannelIsEnabledP = mockFalse
-
 
     )
   }
 }
+
 
