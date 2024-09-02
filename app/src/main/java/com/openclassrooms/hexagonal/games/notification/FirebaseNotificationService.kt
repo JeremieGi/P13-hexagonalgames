@@ -1,5 +1,6 @@
 package com.openclassrooms.hexagonal.games.notification
 
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -9,6 +10,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.openclassrooms.hexagonal.games.ui.MainActivity
@@ -20,16 +22,60 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     companion object {
 
         // Nom de l'unique channel utilisé dans l'application
-        const val CHANNEL_ID_HEXAGONAL : String = "hexagonal_channel_id"
+        const val CHANNEL_ID_HEXAGONAL : String = "hexagonal_channel_test_ID"
+        const val CHANNEL_NAME_HEXAGONAL : String = "Channel de test JG" // Ce nom de channel apparaît dans Android Settings partie Notification
 
         // Création du channel
         fun createChannel(notificationManager: NotificationManager) {
 
-            val channelName: CharSequence = "Firebase Messages"
+            val channelName: CharSequence = CHANNEL_NAME_HEXAGONAL
             val importance = NotificationManager.IMPORTANCE_HIGH
             val mChannel = NotificationChannel(CHANNEL_ID_HEXAGONAL, channelName, importance)
             notificationManager.createNotificationChannel(mChannel)
 
+        }
+
+        const val CHANNEL_STATE_NOTIFICATION_ENABLE : String ="Notifications non activées"
+        const val CHANNEL_STATE_NO_EXIST : String ="Channel inexistant"
+        const val CHANNEL_STATE_EXIST_IMPORTANCE_HIGH : String ="Channel existant - importance haute"
+        const val CHANNEL_STATE_EXIST_IMPORTANCE_NONE : String ="Channel existant - importance faible"
+        /**
+         * L'unique channel de l'appli est-il créé et actif ?
+         */
+        fun sChannelEnable(application: Application, channelId: String) : String {
+
+            val sNotificationEnable : String
+
+            if (notificationsAreEnable(application.applicationContext)){
+
+                val notificationManager = application.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                val existingChannel = notificationManager.getNotificationChannel(channelId)
+                if (existingChannel == null) {
+                    sNotificationEnable = CHANNEL_STATE_NO_EXIST
+                }
+                else{
+                    if (existingChannel.importance != NotificationManager.IMPORTANCE_HIGH){
+                        sNotificationEnable = CHANNEL_STATE_EXIST_IMPORTANCE_NONE
+                    }
+                    else{
+                        sNotificationEnable = CHANNEL_STATE_EXIST_IMPORTANCE_HIGH
+                    }
+                }
+
+            }
+            else{
+                sNotificationEnable = CHANNEL_STATE_NOTIFICATION_ENABLE
+            }
+
+
+            return sNotificationEnable
+
+        }
+
+        // A savoir : On ne peut pas modifier l'autorisation par programmation comme l'utilisateur peut le faire dans les paramètres.
+        fun notificationsAreEnable(context : Context) : Boolean {
+            return NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
     }
 

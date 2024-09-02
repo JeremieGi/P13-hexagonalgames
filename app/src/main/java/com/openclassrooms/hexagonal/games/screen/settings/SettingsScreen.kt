@@ -2,6 +2,7 @@ package com.openclassrooms.hexagonal.games.screen.settings
 
 
 import android.app.Application
+import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.notification.FirebaseNotificationService
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
+import android.provider.Settings
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
+import com.openclassrooms.hexagonal.games.screen.homefeed.ErrorComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,32 +76,39 @@ fun SettingsScreen(
     }
   ) { contentPadding ->
 
+
     val context = LocalContext.current
     val application = context.applicationContext as Application
 
-    Settings(
+    val operationState by viewModel.uiStateNotifCallback.collectAsState()
+
+    SettingsComposable(
       modifier = Modifier.padding(contentPadding),
-      bNotificationEnableP = viewModel.bChannelEnable(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL),
-      bNotificationEnableInAndroidSettingsP = viewModel.notificationsAreEnable(context),
+      operationStateP = operationState,
       onNotificationDisabledClicked = {
         viewModel.disableNotifications(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
       },
       onNotificationEnabledClicked = {
         viewModel.enableNotifications(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
+      },
+      bChannelAlreadyExistP = {
+        viewModel.bChannelAlreadyExist(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
       }
+
     )
   }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun Settings(
+private fun SettingsComposable(
   modifier: Modifier = Modifier,
   onNotificationEnabledClicked: () -> Unit,
   onNotificationDisabledClicked: () -> Unit,
-  bNotificationEnableInAndroidSettingsP : Boolean,
-  bNotificationEnableP : Boolean
+  operationStateP: ResultCustom<String>?,
+  bChannelAlreadyExistP : () -> Boolean
 ) {
+
 
   val notificationsPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     rememberPermissionState(
@@ -102,13 +118,53 @@ private fun Settings(
     null
   }
 
-  var bEnable by remember { mutableStateOf(bNotificationEnableP) }
-  
+  val context = LocalContext.current
+  val application = context.applicationContext as Application
+
+
+  var sInfoNotifChannel by remember { mutableStateOf(FirebaseNotificationService.sChannelEnable(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)) }
+
+  when (operationStateP){
+      null -> {
+        // Premier appel
+      }
+
+    is ResultCustom.Failure -> {
+      ErrorComposable(
+        sMessage = operationStateP.errorMessage?:"Unknow error",
+        onClickRetryP = { }) {
+      }
+    }
+
+    is ResultCustom.Loading -> {
+      // N'arrivera pas
+    }
+
+    is ResultCustom.Success -> {
+      sInfoNotifChannel = FirebaseNotificationService.sChannelEnable(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
+    }
+  }
+
+
+  // Callback de la fenêtre de préférence (Settings) des notficiation pour l'application
+  val notificationSettingsLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.StartActivityForResult()
+  ) { result ->
+    // Callback au retour de la fenêtre de notification
+//    if (result.resultCode == android.app.Activity.RESULT_OK) {
+//
+//    } else {
+//
+//    }
+    sInfoNotifChannel = FirebaseNotificationService.sChannelEnable(application,FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
+  }
+
   Column(
     modifier = modifier.fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.SpaceEvenly
   ) {
+
     Icon(
       modifier = Modifier.size(200.dp),
       painter = painterResource(id = R.drawable.ic_notifications),
@@ -116,44 +172,123 @@ private fun Settings(
       contentDescription = stringResource(id = R.string.contentDescription_notification_icon)
     )
 
-    if (bNotificationEnableInAndroidSettingsP){
-      Text("Notification activée dans les paramètres Android")
-    }
-    else{
+    if (sInfoNotifChannel == FirebaseNotificationService.CHANNEL_STATE_NOTIFICATION_ENABLE){
+
+      // Premier lancement, il faut activer les notifications manuellement
+
       Text("Notification désactivée dans les paramètres Android. A activer manuellement.")
-    }
+      ButtonLaunchPreferences(
+        sTextLabelButton = "First, enable Android Notification for the application",
+        bModeChannelP = false, // Préférence de l'application
+        notificationSettingsLauncher
+      )
 
-    if (bEnable){
-      Text("Notification activée dans le channel")
+
     }
     else{
-      Text("Notification désactivée dans le channel")
-    }
 
-    Button(
-      onClick = {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          if (notificationsPermissionState?.status?.isGranted == false) {
-            notificationsPermissionState.launchPermissionRequest()
+      Text("Notification activée dans les paramètres Android")
+
+      if (sInfoNotifChannel == FirebaseNotificationService.CHANNEL_STATE_EXIST_IMPORTANCE_HIGH){
+
+        Text("Notification activée pour le channel ${FirebaseNotificationService.CHANNEL_NAME_HEXAGONAL}")
+
+        Button(
+          onClick = {
+
+            onNotificationDisabledClicked()
+
+
+          }
+        ) {
+          Text(text = stringResource(id = R.string.notification_disable))
+        }
+
+      }
+      else{
+
+        Text("Notification désactivée pour le channel ${FirebaseNotificationService.CHANNEL_NAME_HEXAGONAL} : ${sInfoNotifChannel}")
+
+
+
+        if (bChannelAlreadyExistP()){
+          // On ne pourra pas désactiver par programmation, il faudra ouvrir les préférences utilisateur
+
+          Text("Une limitation Android empêche de monter le niveau d'importance d'un channel existant. " +
+                  "Cette solution va donc necessiter l'ouverture des Préférences de l'application.")
+
+          ButtonLaunchPreferences(
+            sTextLabelButton = "Il faut ici ouvrir les préférences",
+            bModeChannelP = true,
+            notificationSettingsLauncher = notificationSettingsLauncher
+          )
+
+        }
+        else{
+
+          // La premier activation est faisable par programmation
+
+          Button(
+            onClick = {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (notificationsPermissionState?.status?.isGranted == false) {
+                  notificationsPermissionState.launchPermissionRequest()
+                }
+              }
+
+              onNotificationEnabledClicked()
+
+              }
+          ) {
+            Text(text = stringResource(id = R.string.notification_enable))
           }
         }
-        
-        onNotificationEnabledClicked()
 
-        bEnable = true
       }
-    ) {
-      Text(text = stringResource(id = R.string.notification_enable))
+
     }
-    Button(
-      onClick = {
-        onNotificationDisabledClicked()
-        bEnable = false
-      }
-    ) {
-      Text(text = stringResource(id = R.string.notification_disable))
-    }
+
   }
+}
+
+
+
+@Composable
+fun ButtonLaunchPreferences(
+  sTextLabelButton: String,
+  bModeChannelP: Boolean,
+  notificationSettingsLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+  ){
+
+  val context = LocalContext.current
+
+
+
+  Button(onClick = {
+
+    val intent : Intent
+
+    if (bModeChannelP) {
+      // Créez un Intent pour ouvrir les paramètres de notification sur le channel
+      intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        putExtra(Settings.EXTRA_CHANNEL_ID, FirebaseNotificationService.CHANNEL_ID_HEXAGONAL)
+      }
+    }
+    else{
+      // Créez un Intent pour ouvrir les paramètres généraux de notification
+      intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+      }
+    }
+
+    // Lancez l'activité pour les paramètres de notification
+    notificationSettingsLauncher.launch(intent)
+  }) {
+    Text(text = sTextLabelButton)
+  }
+
+
 }
 
 @PreviewLightDark
@@ -161,11 +296,15 @@ private fun Settings(
 @Composable
 private fun SettingsPreview() {
   HexagonalGamesTheme {
-    Settings(
+
+    val mockChannelAlreadyExists = { false }
+
+    SettingsComposable(
       onNotificationEnabledClicked = { },
       onNotificationDisabledClicked = { },
-      bNotificationEnableP = true,
-      bNotificationEnableInAndroidSettingsP = true,
+      bChannelAlreadyExistP = mockChannelAlreadyExists,
+      operationStateP = null
     )
   }
 }
+

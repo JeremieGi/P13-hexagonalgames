@@ -8,9 +8,12 @@ import android.net.NetworkCapabilities
  * Classe injectée dans les repository pour savoir si l'accès au réseau est possible
  */
 class InjectedContext (
-    private val _context: Context // Injecté par Hilt )> Voir dans AppModule
+    private val _context: Context // Injecté par Hilt -> Voir dans AppModule
 ) {
 
+    /**
+     * Renvoie Vrai si l'application a accès à Internet, faux sinon
+     */
     fun isInternetAvailable(): Boolean {
 
         val connectivityManager = _context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -34,6 +37,9 @@ class InjectedContext (
 
     }
 
+    /**
+     * Accès au contexte (permet de récupérer les ressources Strings depuis un répository par exemple)
+     */
     fun getInjectedContext() : Context {
         return _context
     }

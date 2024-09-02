@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class PostRepository @Inject constructor(
   private val postApi: PostApi,
-  private val injectedContext: InjectedContext // Conetxte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
+  private val injectedContext: InjectedContext // Contexte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
 ) {
   
   /**

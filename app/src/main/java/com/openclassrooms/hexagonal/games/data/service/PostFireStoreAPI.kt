@@ -290,9 +290,6 @@ class PostFireStoreAPI : PostApi {
         comment: PostComment
     ): Flow<ResultCustom<String>> {
 
-        // TODO JG : En mode avion, aucun trySend n'est exécuté (= aucun listener) => Vérifier la connexion
-        // Les commentaires sont tout de même ajoutés à la reconnexion
-        // Je dois gérer çà à la main ?
 
         val task = this.addComment(postId,comment)
 
