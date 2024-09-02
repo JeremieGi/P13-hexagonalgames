@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -35,10 +34,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
         }
 
-        const val CHANNEL_STATE_NOTIFICATION_ENABLE : String ="Notifications non activées"
-        const val CHANNEL_STATE_NO_EXIST : String ="Channel inexistant"
-        const val CHANNEL_STATE_EXIST_IMPORTANCE_HIGH : String ="Channel existant - importance haute"
-        const val CHANNEL_STATE_EXIST_IMPORTANCE_NONE : String ="Channel existant - importance faible"
+        const val CHANNEL_STATE_NOTIFICATION_DESABLED : String ="Notifications non activées"
+        const val CHANNEL_STATE_CHANNEL_DESABLED : String = "Channel inactif"
+        const val CHANNEL_STATE_CHANNEL_ENABLED : String = "Channel actif"
+        //const val CHANNEL_STATE_EXIST_IMPORTANCE_HIGH : String ="Channel existant - importance haute"
+        //const val CHANNEL_STATE_EXIST_IMPORTANCE_NONE : String ="Channel existant - importance faible"
         /**
          * L'unique channel de l'appli est-il créé et actif ?
          */
@@ -52,20 +52,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                 val existingChannel = notificationManager.getNotificationChannel(channelId)
                 if (existingChannel == null) {
-                    sNotificationEnable = CHANNEL_STATE_NO_EXIST
+                    sNotificationEnable = CHANNEL_STATE_CHANNEL_DESABLED
                 }
                 else{
-                    if (existingChannel.importance != NotificationManager.IMPORTANCE_HIGH){
-                        sNotificationEnable = CHANNEL_STATE_EXIST_IMPORTANCE_NONE
+                    if (existingChannel.importance == NotificationManager.IMPORTANCE_NONE){
+                        sNotificationEnable = CHANNEL_STATE_CHANNEL_DESABLED
                     }
                     else{
-                        sNotificationEnable = CHANNEL_STATE_EXIST_IMPORTANCE_HIGH
+                        sNotificationEnable = CHANNEL_STATE_CHANNEL_ENABLED
                     }
                 }
 
             }
             else{
-                sNotificationEnable = CHANNEL_STATE_NOTIFICATION_ENABLE
+                sNotificationEnable = CHANNEL_STATE_NOTIFICATION_DESABLED
             }
 
 
@@ -74,7 +74,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
 
         // A savoir : On ne peut pas modifier l'autorisation par programmation comme l'utilisateur peut le faire dans les paramètres.
-        fun notificationsAreEnable(context : Context) : Boolean {
+        private fun notificationsAreEnable(context : Context) : Boolean {
             return NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
     }
@@ -124,7 +124,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Support Version >= Android 8
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+ //       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             // Si le canal n'existe pas
             val existingChannel = notificationManager.getNotificationChannel(CHANNEL_ID_HEXAGONAL)
@@ -134,10 +134,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             // Si le canal existe déjà, on le touche pas (l'importance peut être paramétrée depuis l'application pour activer les notifs ou pas)
 
-        }
-        else{
-            // J'ai mis dans gradle, Oreo 'Android 8' en version minimale
-        }
+ //       }
+//        else{
+//            // J'ai mis dans gradle, Oreo 'Android 8' en version minimale
+//        }
 
         // Show notification
         // La notification ne s'affiche pas si l'importance du channel est IMPORTANCE_NONE

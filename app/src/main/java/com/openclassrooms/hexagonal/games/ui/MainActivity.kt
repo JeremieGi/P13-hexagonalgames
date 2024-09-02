@@ -92,7 +92,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
       val postId = backStackEntry.arguments?.getString(idPostArg)
 
       // Les commentaires doivent être rafraichis ? (Ajout d'un commentaire depuis AddCommentToPost)
-      val refreshComments = backStackEntry.savedStateHandle?.get<Boolean>(refresh_comments)
+      val refreshComments = backStackEntry.savedStateHandle.get<Boolean>(refresh_comments)
 
       PostDetailScreen(
         postId = postId,

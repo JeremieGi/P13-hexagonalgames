@@ -103,7 +103,7 @@ class PostFakeApi : PostApi {
 
   }
 
-  private fun _loadByID(idPost: String) : Post? {
+  private fun loadByID(idPost: String) : Post? {
 
     return posts.value.find { it.id == idPost }
 
@@ -112,7 +112,7 @@ class PostFakeApi : PostApi {
 
   override fun loadPostByID(idPost: String): Flow<ResultCustom<Post>> {
 
-    val post = _loadByID(idPost)
+    val post = loadByID(idPost)
 
     return callbackFlow {
 

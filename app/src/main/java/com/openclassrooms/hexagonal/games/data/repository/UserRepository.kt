@@ -79,7 +79,7 @@ class UserRepository @Inject constructor() {
                         // Suppression dans l'Authentification Firebase
                         AuthUI.getInstance().delete(context)
                             .addOnSuccessListener {
-                                trySend(ResultCustom.Success(context.getString(R.string.deleteaccount_ok),))
+                                trySend(ResultCustom.Success(context.getString(R.string.deleteaccount_ok)))
                             }
                             .addOnFailureListener { exception ->
                                 trySend(ResultCustom.Failure(exception.localizedMessage))

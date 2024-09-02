@@ -8,8 +8,6 @@
   <string name="add_comment">Add a comment</string>
   <string name="homefeed_fragment_label">Home</string>
   <string name="by">By %1$s</string>
-  <string name="notification_enable">Enable notifications</string>
-  <string name="notification_disable">Disable notifications</string>
   <string name="description_button_add">Add</string>
   <string name="hint_title">Title</string>
   <string name="hint_description">Description</string>
@@ -29,7 +27,6 @@
   <string name="loginCancel">Login process cancelled by user</string>
   <string name="action_selectPhoto">Select a photo</string>
   <string name="needlogin">An account is mandatory in order to add a comment</string>
-  <string name="default_notification_channel_id">Chanel ID</string>
   <string name="loading">Loading …</string>
   <string name="error">Error</string>
   <string name="retry">Retry</string>
@@ -42,4 +39,9 @@
   <string name="no_comments">No comments</string>
   <string name="comments">%1$s comment(s)</string>
   <string name="no_network">No network</string>
+  <string name="limitation_android">"An Android limitation prevents changing the importance level of an existing channel or deleting it. "</string>
+  <string name="info_channel">This solution will therefore require opening the Channel Preferences.</string>
+  <string name="preferences_du_channel">Channel Preferences</string>
+  <string name="channel_activ">Channel enabled</string>
+  <string name="channel_d_sactiv">Channel desabled</string>
 </resources>

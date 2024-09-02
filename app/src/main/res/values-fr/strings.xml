@@ -8,8 +8,6 @@
   <string name="add_fragment_label">Ajout d\'une publication</string>
   <string name="add_comment">Ajout d\'un commentaire</string>
   <string name="by">Par %1$s</string>
-  <string name="notification_enable">Activer les notifications</string>
-  <string name="notification_disable">Désactiver les notifications</string>
   <string name="description_button_add">Ajout</string>
   <string name="hint_title">Titre</string>
   <string name="hint_description">Description</string>
@@ -29,7 +27,6 @@
   <string name="loginCancel">Processus d\'identification annulé par l\'utilisateur</string>
   <string name="action_selectPhoto">Sélectionner une photo</string>
   <string name="needlogin">Un compte est nécessaire pour ajouter un commentaire</string>
-  <string name="default_notification_channel_id">Chanel ID</string>
   <string name="loading">Chargement en cours …</string>
   <string name="error">Erreur</string>
   <string name="retry">Réessayer</string>
@@ -42,5 +39,10 @@
    <string name="no_comments">Pas de commentaire</string>
   <string name="comments">%1$s commentaire(s)</string>
   <string name="no_network">Pas de réseau</string>
+  <string name="limitation_android">"Une limitation Android empêche de changer le niveau d'importance d'un channel existant ou de le supprimer. "</string>
+  <string name="info_channel">Cette solution va donc necessiter l\'ouverture des Préférences du channel.</string>
+  <string name="preferences_du_channel">Préférences du channel</string>
+  <string name="channel_activ">Channel activé</string>
+  <string name="channel_d_sactiv">Channel désactivé</string>
 
 </resources>

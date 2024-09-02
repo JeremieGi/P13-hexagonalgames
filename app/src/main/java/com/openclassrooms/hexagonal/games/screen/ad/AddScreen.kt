@@ -192,7 +192,7 @@ private fun CreatePost(
 
       var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
-      // Callback du mediaPicker (Android 11 et supérieur
+      // Callback du mediaPicker (Android 11 et supérieur)
       val pickMediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         selectedImageUri = uri
         onPhotoChanged(selectedImageUri)
