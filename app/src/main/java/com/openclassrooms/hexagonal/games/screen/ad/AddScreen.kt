@@ -30,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +49,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.openclassrooms.hexagonal.games.R
 import com.openclassrooms.hexagonal.games.data.repository.ResultCustom
-import com.openclassrooms.hexagonal.games.screen.homefeed.LoadingComposable
 import com.openclassrooms.hexagonal.games.ui.theme.HexagonalGamesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,37 +119,45 @@ private fun CreatePost(
 
   val scrollState = rememberScrollState()
 
+  // Code exécuté 2 fois à la validation d'un post si je ne protège pas avec LaunchedEffect
+  LaunchedEffect(stateResultSave) {
+    // Ce code est dans une coroutine => Appel à des composables pas possible
 
-  // Gérer les différents états du résultat d'ajout d'un post
-  when (stateResultSave) {
+    // Gérer les différents états du résultat d'ajout d'un post
+    when (stateResultSave) {
 
-    is ResultCustom.Loading -> {
-      LoadingComposable() // N'arrivera pas
+      is ResultCustom.Loading -> {
+        //LoadingComposable() // N'arrivera pas + On ne peut pas apppeler un Composable dans un LaunchedEffect
+      }
+
+      is ResultCustom.Success -> {
+        // Afficher un message de succès et fermer l'activity
+        Toast
+          .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
+          .show()
+
+        onBackAfterSaveClick()
+      }
+
+      is ResultCustom.Failure -> {
+        // Afficher un message d'erreur suite à l'envoi du Post
+        val errorMessage = stateResultSave.errorMessage ?: context.getString(R.string.unknowError)
+        Toast
+          .makeText(context, errorMessage, Toast.LENGTH_SHORT)
+          .show()
+      }
+
+      null -> {
+        // Ne rien afficher => pas d'ajout de post en cours'
+        //Log.d("test","test")
+      }
     }
 
-    is ResultCustom.Success -> {
-      // Afficher un message de succès et fermer l'activity
-      Toast
-        .makeText(context, stateResultSave.value, Toast.LENGTH_SHORT)
-        .show()
-
-      // TODO JG : Code exécuté 2 fois - Mettre un contrôle
-      onBackAfterSaveClick()
-    }
-
-    is ResultCustom.Failure -> {
-      // Afficher un message d'erreur suite à l'envoi du Post
-      val errorMessage = stateResultSave.errorMessage ?: context.getString(R.string.unknowError)
-      Toast
-        .makeText(context, errorMessage, Toast.LENGTH_SHORT)
-        .show()
-    }
-
-    null -> {
-      // Ne rien afficher => pas d'ajout de post en cours'
-      //Log.d("test","test")
-    }
   }
+
+
+
+
   
   Column(
     modifier = modifier
