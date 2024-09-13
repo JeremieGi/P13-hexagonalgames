@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-private const val idPostArg = "postId"
 private const val refresh_comments = "refresh_comments"
 
 
@@ -89,7 +88,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.PostDetail.route) { backStackEntry ->
 
       // Extraire le postId de l'entrée de la pile
-      val postId = backStackEntry.arguments?.getString(idPostArg)
+      val postId = backStackEntry.arguments?.getString(Screen.ID_POST_ARG)
 
       // Les commentaires doivent être rafraichis ? (Ajout d'un commentaire depuis AddCommentToPost)
       val refreshComments = backStackEntry.savedStateHandle.get<Boolean>(refresh_comments)
@@ -108,7 +107,7 @@ fun HexagonalGamesNavHost(navHostController: NavHostController) {
     composable(route = Screen.AddCommentToPost.route) { backStackEntry ->
 
       // Extraire le postId de l'entrée de la pile
-      val postId = backStackEntry.arguments?.getString(idPostArg)
+      val postId = backStackEntry.arguments?.getString(Screen.ID_POST_ARG)
 
       val savedStateHandle = navHostController.previousBackStackEntry?.savedStateHandle
 

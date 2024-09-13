@@ -242,7 +242,7 @@ private fun SettingsComposable(
 
 @Composable
 fun ChannelPreferenceComposable(
-  notificationSettingsLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+  notificationSettingsLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>, // Callback lors de la fermeture de pramétrage des notifications
   bChannelIsEnabledP: () -> Boolean
 ) {
 
@@ -255,6 +255,7 @@ fun ChannelPreferenceComposable(
     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
   ){
 
+    // Channel activé
     if (bChannelIsEnabledP()){
       Text(stringResource(R.string.channel_activ))
     }

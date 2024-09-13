@@ -6,6 +6,11 @@ sealed class Screen(
   val route: String,
   //val navArguments: List<NamedNavArgument> = emptyList()
 ) {
+
+  companion object {
+    const val ID_POST_ARG = "postId"
+  }
+
   data object Homefeed : Screen("homefeed")
   
   data object AddPost : Screen("addPost")
@@ -14,12 +19,12 @@ sealed class Screen(
 
   data object UserInfo : Screen("userInfo")
 
-  data object PostDetail : Screen("postDetail/{postId}"){
+  data object PostDetail : Screen("postDetail/{$ID_POST_ARG}"){
     // Configurer la Route avec des Arguments
     fun createRoute(postId: String) = "postDetail/$postId"
   }
 
-  data object AddCommentToPost : Screen("addCommentToPost/{postId}"){
+  data object AddCommentToPost : Screen("addCommentToPost/{$ID_POST_ARG}"){
     // Configurer la Route avec des Arguments
     fun createRoute(postId: String) = "addCommentToPost/$postId"
   }
